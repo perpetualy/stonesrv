@@ -1,0 +1,9 @@
+Stone - [Info]: Users:[0xc042270000 0xc0422700b0]
+Stone - [Info]: User:&{root_1_xx:xx:xx:xx:xx:xx_89lskjf98452asdlfk238af root 123456 root@163.com Beijing Root Tree xx:xx:xx:xx:xx:xx 89lskjf98452asdlfk238af 1 2018-7-18 2018-8-18 1}
+Stone - [Info]: regControllers() ping 0xc04219a150 / GET
+Stone - [Info]: regControllers() /usr/register 0xc04219a160  POST
+Stone - [Info]: regControllers() usr/login 0xc04219a170  POST
+Stone - [Info]: regControllers() logout 0xc04219a188  GET
+Stone - [Info]: regControllers() update 0xc04219a1a0  GET
+Stone - [Info]: regControllers() admin 0xc04219a1b0 / POST
+[GIN] 2018/07/19 - 15:37:49 | 200 [0m|       997.6µs |   172.20.28.101 |  POST [0m    /usr/login
