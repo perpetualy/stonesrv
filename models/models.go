@@ -2,6 +2,7 @@ package models
 
 type Config struct {   //ini 配置文件
 	DBAddress 		string  `ini:"DBAddress"`
+	ServerAddress   string  `ini:"ServerAddress"`
 }
 
 //用户信息

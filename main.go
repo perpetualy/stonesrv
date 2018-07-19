@@ -6,6 +6,7 @@ import (
 	"stonesrv/log"
 	"stonesrv/routers"
 	"stonesrv/database"
+	"stonesrv/conf"
 )
 
 func main() {
@@ -21,7 +22,7 @@ func main() {
 	user := database.GetDatabase().GetUserByName("root")
 	log.Info(fmt.Sprintf("User:%v", user))
 
-	routers.Init("172.20.28.101:2186")
+	routers.Init(conf.GetServerAddress())
 	pingpong := new(controllers.PingPong)
 	routers.AddController(pingpong)
 

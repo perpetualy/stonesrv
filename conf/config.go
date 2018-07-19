@@ -13,6 +13,10 @@ func GetDBAddress()string{
 	return conf.DBAddress
 }
 
+func GetServerAddress()string{
+	return conf.ServerAddress
+}
+
 func initConfig() models.Config{
 	config,err := readConfig("conf/stonesrv.cfg")  //也可以通过os.arg或flag从命令行指定配置文件路径
 	if err != nil {
