@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"fmt"
-	"stonesrv/accounts"
 	"stonesrv/database"
 	"stonesrv/log"
 	"stonesrv/models"
@@ -35,54 +34,76 @@ func (p *Register) GetMethod() string {
 
 //GetFunc 注册方法实现
 func (p *Register) GetFunc() func(context *gin.Context) {
-	return func(context *gin.Context) {
-		var json struct {
-			User     string `json:"user" binding:"required"`
-			Password string `json:"password" binding:"required"` //MD5以后的值
-			Email    string `json:"email" binding:"required"`
-			Address  string `json:"address" binding:"required"`
-			FullName string `json:"fullname" binding:"required"`
+	return p.register
+}
 
-			Mac   string `json:"mail" binding:"required"`
-			Disk0 string `json:"disk0" binding:"required"`
-			Salt  int64  `json:"salt" binding:"required"`
-		}
-		err := context.Bind(&json)
-		if err != nil {
-			log.Error(fmt.Sprintf("Register JSON error %+v", err))
-			context.JSON(8000, gin.H{"status": "Reg failed"})
-			return
-		}
-
-		//验证MAC是否合法，
-		//验证DISK0是否合法
-		//如果已经注册过了就不允许注册了。
-
-		now := time.Now()
-		nowyear, nowmonth, nowday := now.Date()
-		expdate := now.AddDate(0, 1, 0)
-		expyear, expmonth, expday := expdate.Date()
-
-		key := strings.ToLower(fmt.Sprintf("%s_%d_%s_%s", json.User, json.Salt, json.Mac, json.Disk0))
-		user := models.User{
-			Key:      key, //客户端转为小写 + 下划线 + Salt + 下划线 + ENCODE(SALT MAC) + 下划线 + ENCODE(SALT DISK)
-			User:     json.User,
-			Password: json.Password, // 真实密码 MD5 + ENCODE(SALT)
-			Email:    json.Email,
-			Address:  json.Address,
-			FullName: json.FullName,
-
-			Mac:       json.Mac,   //"1C:1B:0D:A9:3F:79",  //ENCODE(SALT)
-			Disk0:     json.Disk0, //"20935UKALWV28LA8923SDF", //ENCODE(SALT)
-			Salt:      json.Salt,
-			RegDate:   fmt.Sprintf("%d-%d-%d", nowyear, nowmonth, nowday), //生成注册时间
-			ExpDate:   fmt.Sprintf("%d-%d-%d", expyear, expmonth, expday), //生成到期时间, 默认试用一个月
-			Activated: 1,                                                  //用户默认激活状态
-		}
-		p.Db.UpsertUser(user)
-		accounts.AddAccount(user.User, user.Password)
-		context.JSON(200, gin.H{"status": "ok", "User": user.User})
+func (p *Register) register(context *gin.Context) {
+	req := models.User{}
+	err := context.Bind(&req)
+	if err != nil {
+		log.Error(fmt.Sprintf("Register JSON error %+v", err))
+		context.JSON(400, gin.H{"status": "Reg failed"})
+		return
 	}
+
+	key := strings.ToLower(fmt.Sprintf("%s%s%s", req.User, req.Mac, req.Disk0))
+	//查找Key是否存在
+	//如果已经存在，直接返回
+	if p.Db.IsUserExist(key) {
+		context.JSON(203, gin.H{"status": fmt.Sprintf("用户 [%s] 已经被注册 ", req.User)})
+		return
+	}
+
+	//验证MAC是否存在
+	if p.Db.IsMACExist(req.Mac) {
+		//MAC存在返回
+		context.JSON(203, gin.H{"status": "这台机器已经被注册，请联系管理员"})
+		return
+	}
+
+	//验证DISK0是否存在
+	if p.Db.IsDisk0Exist(req.Disk0) {
+		//Disk0存在返回
+		context.JSON(203, gin.H{"status": "这台机器已经被注册，请联系管理员"})
+		return
+	}
+
+	//验证使用时长
+	if req.Duration < 0 || req.Duration > 365 {
+		context.JSON(203, gin.H{"status": "非法的使用时长"})
+		return
+	}
+
+	now := time.Now()
+	nowyear, nowmonth, nowday := now.Date()
+	expdate := now.AddDate(0, 0, int(req.Duration))
+	expyear, expmonth, expday := expdate.Date()
+
+	user := req
+	user.Key = key
+	user.RegDate = fmt.Sprintf("%d-%d-%d", nowyear, nowmonth, nowday) //生成注册时间
+	user.ExpDate = fmt.Sprintf("%d-%d-%d", expyear, expmonth, expday) //生成过期时间
+	user.Activated = 1
+
+	err = p.Db.InsertMAC(models.MAC{Key: user.Mac, UserKey: user.Key})
+	if err != nil {
+		context.JSON(203, gin.H{"status": fmt.Sprintf("用户 [%s=] 注册失败", req.User)})
+		return
+	}
+
+	err = p.Db.InsertDisk0(models.Disk0{Key: user.Disk0, UserKey: user.Key})
+	if err != nil {
+		context.JSON(203, gin.H{"status": fmt.Sprintf("用户 [%s=] 注册失败", req.User)})
+		return
+	}
+
+	err = p.Db.InsertUser(user)
+	if err != nil {
+		context.JSON(203, gin.H{"status": fmt.Sprintf("用户 [%s=] 注册失败", req.User)})
+		return
+	}
+
+	context.JSON(200, gin.H{"status": "ok", "User": user.User})
 }
 
 //Login 登录控制器

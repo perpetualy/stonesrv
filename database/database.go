@@ -6,10 +6,18 @@ import "stonesrv/models"
 type DataBase interface {
 	Init()
 
-	GetAllUsers() []*models.User
-	GetUserByName(string) *models.User
+	//硬件
+	InsertMAC(models.MAC) error
+	InsertDisk0(models.Disk0) error
+	IsMACExist(mac string) bool
+	IsDisk0Exist(disk0 string) bool
 
-	UpsertUser(models.User)
+	//用户
+	GetAllUsers() []*models.User
+	IsUserExist(key string) bool
+	GetUserByName(string) *models.User
+	InsertUser(models.User) error
+	UpsertUser(models.User) error
 }
 
 var db *DB

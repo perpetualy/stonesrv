@@ -8,7 +8,6 @@ import (
 	"stonesrv/env"
 	"stonesrv/log"
 	"stonesrv/models"
-	"strings"
 
 	godriver "github.com/arangodb/go-driver"
 	"github.com/arangodb/go-driver/http"
@@ -43,13 +42,75 @@ func (p *ArangoDB) Init() {
 	p.openDb(p.dbname)
 	p.openCollection(env.CollectionUser)
 	p.openCollection(env.CollectionUpdate)
+	p.openCollection(env.CollectionMAC)
+	p.openCollection(env.CollectionDisk0)
+}
+
+//InsertMAC 插入MAC
+func (p *ArangoDB) InsertMAC(mac models.MAC) error {
+	bindVar := map[string]interface{}{
+		"doc":         mac,
+		"@collection": env.CollectionMAC,
+	}
+	err := p.insert(bindVar)
+	return err
+}
+
+//InsertDisk0 插入Disk0
+func (p *ArangoDB) InsertDisk0(disk0 models.Disk0) error {
+	bindVar := map[string]interface{}{
+		"doc":         disk0,
+		"@collection": env.CollectionDisk0,
+	}
+	err := p.insert(bindVar)
+	return err
+}
+
+//IsMACExist 判断MAC是否存在
+func (p *ArangoDB) IsMACExist(mac string) bool {
+	cursor, err := p.queryDocByKey(env.CollectionMAC, mac)
+	if err != nil {
+		log.Error(fmt.Sprintf("IsMACExist() error, detail%v\n", err))
+		return true
+	}
+	defer cursor.Close()
+	for cursor.HasMore() {
+		var m models.MAC
+		_, err := cursor.ReadDocument(context.Background(), &m)
+		if err != nil {
+			log.Debug(fmt.Sprintf("IsMACExist() error, detail%v\n", err))
+			return true
+		}
+		return true
+	}
+	return false
+}
+
+//IsDisk0Exist 判断Disk0是否存在
+func (p *ArangoDB) IsDisk0Exist(disk0 string) bool {
+	cursor, err := p.queryDocByKey(env.CollectionDisk0, disk0)
+	if err != nil {
+		log.Error(fmt.Sprintf("IsDisk0Exist() error, detail%v\n", err))
+		return true
+	}
+	defer cursor.Close()
+	for cursor.HasMore() {
+		var d models.MAC
+		_, err := cursor.ReadDocument(context.Background(), &d)
+		if err != nil {
+			log.Error(fmt.Sprintf("IsDisk0Exist() error, detail%v\n", err))
+			return true
+		}
+		return true
+	}
+	return false
 }
 
 //GetAllUsers 获取所有的用户
 func (p *ArangoDB) GetAllUsers() (users []*models.User) {
-	cursor, err := p.queryUserConditions("")
+	cursor, err := p.queryUserAll()
 	if err != nil {
-		log.Debug(fmt.Sprintf("GetAllUsers() error, detail%v\n", err))
+		log.Error(fmt.Sprintf("GetAllUsers() error, detail%v\n", err))
 		return nil
 	}
 	defer cursor.Close()
@@ -58,7 +119,7 @@ func (p *ArangoDB) GetAllUsers() (users []*models.User) {
 		var user models.User
 		_, err := cursor.ReadDocument(context.Background(), &user)
 		if err != nil {
-			log.Debug(fmt.Sprintf("GetAllUsers() error, detail%v\n", err))
+			log.Error(fmt.Sprintf("GetAllUsers() error, detail%v\n", err))
 			return nil
 		}
 		users = append(users, &user)
@@ -66,11 +127,31 @@ func (p *ArangoDB) GetAllUsers() (users []*models.User) {
 	return users
 }
 
+//IsUserExist 判断用户是否存在
+func (p *ArangoDB) IsUserExist(key string) bool {
+	cursor, err := p.queryDocByKey(env.CollectionUser, key)
+	if err != nil {
+		log.Error(fmt.Sprintf("IsUserExist() error, detail%v\n", err))
+		return true
+	}
+	defer cursor.Close()
+	for cursor.HasMore() {
+		var u models.User
+		_, err := cursor.ReadDocument(context.Background(), &u)
+		if err != nil {
+			log.Error(fmt.Sprintf("IsUserExist() error, detail%v\n", err))
+			return true
+		}
+		return true
+	}
+	return false
+}
+
 //GetUserByName 通过名称获取用户
 func (p *ArangoDB) GetUserByName(username string) *models.User {
-	cursor, err := p.queryUserConditions(username)
+	cursor, err := p.queryUserByName(username)
 	if err != nil {
-		log.Debug(fmt.Sprintf("GetUserByName() error, detail%v\n", err))
+		log.Error(fmt.Sprintf("GetUserByName() error, detail%v\n", err))
 		return nil
 	}
 	defer cursor.Close()
@@ -78,7 +159,7 @@ func (p *ArangoDB) GetUserByName(username string) *models.User {
 		var user models.User
 		_, err := cursor.ReadDocument(context.Background(), &user)
 		if err != nil {
-			log.Debug(fmt.Sprintf("GetUserByName() error, detail%v\n", err))
+			log.Error(fmt.Sprintf("GetUserByName() error, detail%v\n", err))
 			return nil
 		}
 		return &user
@@ -86,16 +167,25 @@ func (p *ArangoDB) GetUserByName(username string) *models.User {
 	return nil
 }
 
+//InsertUser 插入用户
+func (p *ArangoDB) InsertUser(user models.User) error {
+	bindVar := map[string]interface{}{
+		"doc":         user,
+		"@collection": env.CollectionUser,
+	}
+	err := p.insert(bindVar)
+	return err
+}
+
 //UpsertUser 更新或者插入用户
-func (p *ArangoDB) UpsertUser(user models.User) {
+func (p *ArangoDB) UpsertUser(user models.User) error {
 	bindVar := map[string]interface{}{
 		"doc":         user,
 		"key":         user.Key,
 		"@collection": env.CollectionUser,
 	}
 	err := p.upsert(bindVar)
-	if err == nil {
-	}
+	return err
 }
 
 //initConnection 初始化连接
@@ -233,24 +323,68 @@ func (p *ArangoDB) describe(err error) string {
 }
 
 //queryUserConditions 获取用户的通用方法
-func (p *ArangoDB) queryUserConditions(username string) (out godriver.Cursor, e error) {
+func (p *ArangoDB) queryUserAll() (out godriver.Cursor, e error) {
 	aql := `FOR u in user
 				return u`
-	bindVar := map[string]interface{}{}
-	if strings.Compare(strings.Trim(username, " "), "") != 0 {
-		aql = `FOR u in user
-				FILTER u.user == @UserName
-				return u`
-		bindVar = map[string]interface{}{
-			"UserName": username,
-		}
-	}
 
+	cursor, err := p.Database.Query(context.Background(), aql, nil)
+	if err != nil {
+		return nil, err
+	}
+	return cursor, err
+}
+
+//queryUserByName 通过名称找用户数据
+func (p *ArangoDB) queryUserByName(username string) (out godriver.Cursor, e error) {
+	aql := `FOR u in user
+			FILTER u.user == @UserName
+			return u`
+	bindVar := map[string]interface{}{
+		"UserName": username,
+	}
 	cursor, err := p.Database.Query(context.Background(), aql, bindVar)
 	if err != nil {
 		return nil, err
 	}
 	return cursor, err
+}
+
+//queryDocByKey 通用方法通过KEY找数据
+func (p *ArangoDB) queryDocByKey(collection string, key string) (out godriver.Cursor, e error) {
+	aql := `FOR doc in @@collection
+			FILTER doc._key == @key
+			return doc`
+	bindVar := map[string]interface{}{
+		"key":         key,
+		"@collection": collection,
+	}
+	cursor, err := p.Database.Query(context.Background(), aql, bindVar)
+	if err != nil {
+		return nil, err
+	}
+	return cursor, err
+}
+
+//insert 通用插入
+func (p *ArangoDB) insert(bindVar map[string]interface{}) error {
+	aql := `
+		INSERT @doc IN @@collection
+		RETURN NEW._key
+		`
+	cursor, err := p.Database.Query(context.Background(), aql, bindVar)
+	if err != nil {
+		log.Info(fmt.Sprintf("INSERT %v failed %v .", bindVar["@collection"], err))
+		return err
+	}
+	defer cursor.Close()
+	var ret string
+	_, err = cursor.ReadDocument(context.Background(), &ret)
+	if err != nil {
+		log.Info(fmt.Sprintf("INSERT %v failed %v .", bindVar["@collection"], err))
+		return err
+	}
+	log.Info(fmt.Sprintf("INSERT %v Success %v.", bindVar["@collection"], ret))
+	return nil
 }
 
 //upsert 通用插入与更新

@@ -1,24 +1,40 @@
 package models
 
-type Config struct { //ini 配置文件
+//Config ini配置文件
+type Config struct {
 	DBAddress     string `ini:"DBAddress"`
 	ServerAddress string `ini:"ServerAddress"`
 	ServerPort    string `ini:"ServerPort"`
 }
 
-//用户信息
+//User 用户信息
 type User struct {
 	Key      string `json:"_key,omitempty"`
-	User     string `json:"user"`
-	Password string `json:"password"`
-	Email    string `json:"email"`
-	Address  string `json:"address"`
-	FullName string `json:"fullname"`
+	User     string `json:"user" binding:"required"`
+	Password string `json:"password" binding:"required"`
+	Email    string `json:"email" binding:"required"`
+	Address  string `json:"address" binding:"required"`
+	FullName string `json:"fullname" binding:"required"`
+	Phone    string `json:"phone" binding:"required"`
+	Company  string `json:"company" binding:"required"`
 
-	Mac       string `json:"mac"`
-	Disk0     string `json:"disk0"`
-	Salt      int64  `json:"salt"`
+	Mac       string `json:"mac" binding:"required"`
+	Disk0     string `json:"disk0" binding:"required"`
+	Salt      int64  `json:"salt" binding:"required"`
+	Duration  int64  `json:"duration" binding:"required"`
 	RegDate   string `json:"regdate"`
 	ExpDate   string `json:"expdate"`
 	Activated int64  `json:"activated"`
+}
+
+//MAC 注册的MAC
+type MAC struct {
+	Key     string `json:"_key,omitempty"`
+	UserKey string `json:"userkey"`
+}
+
+//Disk0 注册的Disk0
+type Disk0 struct {
+	Key     string `json:"_key,omitempty"`
+	UserKey string `json:"userkey"`
 }

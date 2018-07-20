@@ -14,4 +14,8 @@ var (
 	CollectionUser = "user"
 	//CollectionUpdate 更新集合
 	CollectionUpdate = "update"
+	//CollectionMAC MAC地址集合
+	CollectionMAC = "mac"
+	//CollectionDisk0 Disk0地址集合
+	CollectionDisk0 = "disk0"
 )
