@@ -1,11 +1,12 @@
-package package_name
+package main
 
 import (
 	"testing"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestIntegerStuff(t *testing.T) {
+//MAIN函数测试
+func TestMainmain(t *testing.T) {
 	Convey("Given some integer with a starting value", t, func() {
 		x := 1
 
