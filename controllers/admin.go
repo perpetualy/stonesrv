@@ -21,19 +21,21 @@ func (p *Admin) GetMethod() string{
 
 //admin login
 func (p *Admin) GetFunc() func(context *gin.Context){
-	return func(context *gin.Context) {
-		user := context.MustGet(gin.AuthUserKey).(string)
-		// Parse JSON
-		var json struct {
-			Value string `json:"value" binding:"required"`
-			MyData string `json:"mydata"`
-		}
-		//ROOT 用户登录
-		//给一个SESSION
+	return p.login
+}
 
-		if context.Bind(&json) == nil {
-			context.JSON(200, gin.H{"status": "ok", "User":user, "Value":json.Value, "MyData": json.MyData})
-		}
+func (p *Admin) login(context *gin.Context){
+	user := context.MustGet(gin.AuthUserKey).(string)
+	// Parse JSON
+	var json struct {
+		Value string `json:"value" binding:"required"`
+		MyData string `json:"mydata"`
+	}
+	//ROOT 用户登录
+	//给一个SESSION
+
+	if context.Bind(&json) == nil {
+		context.JSON(200, gin.H{"status": "ok", "User":user, "Value":json.Value, "MyData": json.MyData})
 	}
 }
 

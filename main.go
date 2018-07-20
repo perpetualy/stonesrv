@@ -13,6 +13,9 @@ func main() {
 	log.Init("stone.log", true)
 	//读取配置文件
 
+	conf.Init("")
+	database.Init()
+
 	////启用获取全部用户线程
 	//////////////////////////////////////////////////
 	users := database.GetDatabase().GetAllUsers()
@@ -22,7 +25,7 @@ func main() {
 	user := database.GetDatabase().GetUserByName("root")
 	log.Info(fmt.Sprintf("User:%v", user))
 
-	routers.Init(conf.GetServerAddress())
+	routers.Init()
 	pingpong := new(controllers.PingPong)
 	routers.AddController(pingpong)
 

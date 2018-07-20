@@ -11,13 +11,12 @@ type DataBase interface {
 	UpsertUser(models.User)
 }
 
-var db = initDB()
+var db *DB
 
-func initDB() *DB{
+func Init(){
 	db := &DB{}
 	db.CurrentDB = &ArangoDB{}
 	db.CurrentDB.Init()
-	return db
 }
 
 type DB struct{

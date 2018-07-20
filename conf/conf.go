@@ -1,6 +1,7 @@
 package conf
 
 import (
+	"strings"
 	"gopkg.in/ini.v1"
 	"stonesrv/models"
 	"stonesrv/log"
@@ -13,13 +14,20 @@ func newConfig() *Conf{
 	c := &Conf{
 		confPath : "conf/stonesrv.cfg",
 	}
-	c.config = c.initConfig()
 	return c
 }
 
 type Conf struct{
 	confPath string
 	config   models.Config
+}
+
+func Init(path string){
+	conf = newConfig()
+	if strings.Compare(path, "") != 0{
+		conf.confPath = path
+	}
+	conf.initConfig()
 }
 
 func GetDBAddress() string{
@@ -35,14 +43,14 @@ func GetServerPort() string{
 }
 
 //初始化配置文件
-func (p *Conf)initConfig() models.Config{
+func (p *Conf)initConfig() {
 	config,err := p.readConfig() 
 	if err != nil {
 		log.Error(fmt.Sprintf("%v",err))
 		panic(-1)
 	}
 	log.Info(fmt.Sprintf("Config file read %+v",config))
-	return config
+	p.config = config
 }
 
 //读取配置文件并转成结构体
