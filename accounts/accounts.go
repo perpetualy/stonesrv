@@ -20,8 +20,9 @@ type Accounts struct {
 	account map[string]string
 }
 
-func AddAccount(user string, password string){
+func AddAccount(user string, password string) string{
 	acc.addAccount(user, password)
+	return user
 }
 
 func GetAccounts() map[string]string{

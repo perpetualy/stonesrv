@@ -6,7 +6,7 @@ import (
 )
 
 //MAIN函数测试
-func TestMainmain(t *testing.T) {
+func TestMainMain(t *testing.T) {
 	Convey("Given some integer with a starting value", t, func() {
 		x := 1
 
