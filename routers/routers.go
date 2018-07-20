@@ -1,53 +1,54 @@
 package routers
 
 import (
-	"stonesrv/conf"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"runtime/debug"
 	"stonesrv/accounts"
+	"stonesrv/conf"
 	"stonesrv/controllers"
 	"stonesrv/log"
 	"strings"
 	"sync"
+
+	"github.com/gin-gonic/gin"
 )
 
 var rou = newRouters()
 
-func newRouters() *Routers{
+func newRouters() *Routers {
 	return new(Routers)
 }
 
 type Routers struct {
-	address   string
-	routerEng *gin.Engine
+	address     string
+	routerEng   *gin.Engine
 	controllers sync.Map
 }
 
 //初始化服务地址
 //初始化BASIC认证账号
-func Init(){
+func Init() {
 	rou.routerEng = gin.Default()
 	rou.address = fmt.Sprintf("%s:%s", conf.GetServerAddress(), conf.GetServerPort())
 }
 
 //添加控制器
-func AddController(controller controllers.Controllers){
+func AddController(controller controllers.Controllers) {
 	rou.addController(controller)
 }
 
 //运行服务
-func Run(){
+func Run() {
 	rou.run()
 }
 
 //运行TLS
-func RunTLS(){
+func RunTLS() {
 	rou.runTLS()
 }
 
 //注册所有控制器
-func (p *Routers) regControllers(){
+func (p *Routers) regControllers() {
 	defer func() {
 		if err := recover(); err != nil {
 			log.Error(fmt.Sprintf("routers.go : regControllers() %v %+v", err, string(debug.Stack())))
@@ -56,9 +57,9 @@ func (p *Routers) regControllers(){
 	p.controllers.Range(func(ki, vi interface{}) bool {
 		controller := vi.(controllers.Controllers)
 		rp := controller.GetRelativePath()
-		f  := controller.GetFunc()
-		g  := controller.GetGroup()  //在这里group强制用作认证前置
-		m  := controller.GetMethod()
+		f := controller.GetFunc()
+		g := controller.GetGroup() //在这里group强制用作认证前置
+		m := controller.GetMethod()
 		// Authorized group (uses gin.BasicAuth() middleware)
 		// Same than:
 		// authorized := r.Group("/")
@@ -67,53 +68,53 @@ func (p *Routers) regControllers(){
 		//	  "manu": "123",
 		//}))
 		log.Info(fmt.Sprintf("regControllers() %+v %+v %+v %+v", rp, &f, g, m))
-		switch m{
+		switch m {
 		case "POST":
-			if strings.Compare(g, "") != 0{
+			if strings.Compare(g, "") != 0 {
 				p.routerEng.Group(g, gin.BasicAuth(accounts.GetAccounts())).POST(rp, f)
-			}else{
+			} else {
 				p.routerEng.POST(rp, f)
 			}
 		case "GET":
-			if strings.Compare(g, "") != 0{
+			if strings.Compare(g, "") != 0 {
 				p.routerEng.Group(g, gin.BasicAuth(accounts.GetAccounts())).GET(rp, f)
-			}else{
+			} else {
 				p.routerEng.GET(rp, f)
 			}
 		case "DELETE":
-			if strings.Compare(g, "") != 0{
+			if strings.Compare(g, "") != 0 {
 				p.routerEng.Group(g, gin.BasicAuth(accounts.GetAccounts())).DELETE(rp, f)
-			}else{
+			} else {
 				p.routerEng.DELETE(rp, f)
 			}
 		case "PATCH":
-			if strings.Compare(g, "") != 0{
+			if strings.Compare(g, "") != 0 {
 				p.routerEng.Group(g, gin.BasicAuth(accounts.GetAccounts())).PATCH(rp, f)
-			}else{
+			} else {
 				p.routerEng.PATCH(rp, f)
 			}
 		case "PUT":
-			if strings.Compare(g, "") != 0{
+			if strings.Compare(g, "") != 0 {
 				p.routerEng.Group(g, gin.BasicAuth(accounts.GetAccounts())).PUT(rp, f)
-			}else{
+			} else {
 				p.routerEng.PUT(rp, f)
 			}
 		case "OPTIONS":
-			if strings.Compare(g, "") != 0{
+			if strings.Compare(g, "") != 0 {
 				p.routerEng.Group(g, gin.BasicAuth(accounts.GetAccounts())).OPTIONS(rp, f)
-			}else{
+			} else {
 				p.routerEng.OPTIONS(rp, f)
 			}
 		case "HEAD":
-			if strings.Compare(g, "") != 0{
+			if strings.Compare(g, "") != 0 {
 				p.routerEng.Group(g, gin.BasicAuth(accounts.GetAccounts())).HEAD(rp, f)
-			}else{
+			} else {
 				p.routerEng.HEAD(rp, f)
 			}
 		case "Any":
-			if strings.Compare(g, "") != 0{
+			if strings.Compare(g, "") != 0 {
 				p.routerEng.Group(g, gin.BasicAuth(accounts.GetAccounts())).Any(rp, f)
-			}else{
+			} else {
 				p.routerEng.Any(rp, f)
 			}
 		}
@@ -121,7 +122,7 @@ func (p *Routers) regControllers(){
 	})
 }
 
-func (p *Routers) run(){
+func (p *Routers) run() {
 
 	//注册控制器
 	p.regControllers()
@@ -130,7 +131,7 @@ func (p *Routers) run(){
 	p.routerEng.Run(p.address)
 }
 
-func (p *Routers) runTLS(){
+func (p *Routers) runTLS() {
 	//注册控制器
 	p.regControllers()
 
@@ -138,9 +139,6 @@ func (p *Routers) runTLS(){
 	p.routerEng.RunTLS(p.address, "server.crt", "server.key")
 }
 
-func (p *Routers) addController(controller controllers.Controllers){
+func (p *Routers) addController(controller controllers.Controllers) {
 	p.controllers.Store(controller.GetRelativePath(), controller)
 }
-
-
-

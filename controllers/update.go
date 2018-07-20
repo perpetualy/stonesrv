@@ -2,24 +2,28 @@ package controllers
 
 import "github.com/gin-gonic/gin"
 
-//应用版本更新
+//Update 应用版本更新
 type Update struct {
 	Controllers
 }
 
-func (p *Update) GetGroup() string{
+//GetGroup 空
+func (p *Update) GetGroup() string {
 	return ""
 }
 
-func (p *Update) GetRelativePath() string{
-	return "update"
+//GetRelativePath 路径 update
+func (p *Update) GetRelativePath() string {
+	return "/update"
 }
 
-func (p *Update) GetMethod() string{
+//GetMethod GET
+func (p *Update) GetMethod() string {
 	return "GET"
 }
 
-func (p *Update) GetFunc() func(context *gin.Context){
+//GetFunc 更新方法实现
+func (p *Update) GetFunc() func(context *gin.Context) {
 	return func(context *gin.Context) {
 		user := context.Params.ByName("name")
 		value := user

@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
+	"stonesrv/conf"
 	"stonesrv/controllers"
+	"stonesrv/database"
 	"stonesrv/log"
 	"stonesrv/routers"
-	"stonesrv/database"
-	"stonesrv/conf"
 )
 
 func main() {
@@ -30,7 +30,7 @@ func main() {
 	routers.AddController(pingpong)
 
 	routers.AddController(&controllers.Register{
-		Db:database.GetDatabase(),
+		Db: database.GetDatabase(),
 	})
 	routers.AddController(&controllers.Login{})
 	routers.AddController(&controllers.Logout{})

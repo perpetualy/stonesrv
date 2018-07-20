@@ -3,6 +3,7 @@ package controllers
 import (
 	"stonesrv/conf"
 	"testing"
+
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -45,7 +46,7 @@ func TestRegisterGetMethod(t *testing.T) {
 //Register函数测试
 func TestRegister(t *testing.T) {
 	Convey("【测试】 Register", t, func() {
-		
+
 		Convey("注册 ", func() {
 			So(1, ShouldEqual, 1)
 		})
@@ -71,7 +72,7 @@ func TestLoginGetRelativePath(t *testing.T) {
 		login := Login{}
 		relativePath := login.GetRelativePath()
 		Convey("获取相对路径 ", func() {
-			So(relativePath, ShouldEqual, "usr/login")
+			So(relativePath, ShouldEqual, "/usr/login")
 		})
 	})
 }
@@ -91,7 +92,7 @@ func TestLoginGetMethod(t *testing.T) {
 //Login函数测试
 func TestLogin(t *testing.T) {
 	Convey("【测试】 Login", t, func() {
-		
+
 		Convey("登录 ", func() {
 			So(1, ShouldEqual, 1)
 		})
@@ -137,7 +138,7 @@ func TestLogoutGetMethod(t *testing.T) {
 //Logout函数测试
 func TestLogout(t *testing.T) {
 	Convey("【测试】 Logout", t, func() {
-		
+
 		Convey("注册 ", func() {
 			So(1, ShouldEqual, 1)
 		})

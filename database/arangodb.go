@@ -3,37 +3,38 @@ package database
 import (
 	"encoding/json"
 	"fmt"
-	godriver "github.com/arangodb/go-driver"
-	"github.com/arangodb/go-driver/http"
-	"golang.org/x/net/context"
 	"runtime/debug"
+	"stonesrv/conf"
 	"stonesrv/log"
 	"stonesrv/models"
 	"strings"
-	"stonesrv/conf"
+
+	godriver "github.com/arangodb/go-driver"
+	"github.com/arangodb/go-driver/http"
+	"golang.org/x/net/context"
 )
 
 type ArangoDB struct {
 	DataBase
 
-	address     string
-	user        string
-	password    string
-	dbname      string
-	err 		error
+	address  string
+	user     string
+	password string
+	dbname   string
+	err      error
 
-	DbConn   	godriver.Connection
-	DbClient 	godriver.Client
-	Database 	godriver.Database
+	DbConn   godriver.Connection
+	DbClient godriver.Client
+	Database godriver.Database
 }
 
-func (p *ArangoDB) Init(){
+func (p *ArangoDB) Init() {
 	//下面是硬编码
 	p.address = fmt.Sprintf("http://%s:8529", conf.GetDBAddress())
-	p.user = "root"				//用户名
-	p.password = "827aOZ35vd"	//密码
-	p.dbname = "stone"			//数据库名称
-	
+	p.user = "root"           //用户名
+	p.password = "827aOZ35vd" //密码
+	p.dbname = "stone"        //数据库名称
+
 	p.initConnection(p.address)
 	p.initClient(p.user, p.password)
 	p.openDb(p.dbname)
@@ -41,15 +42,15 @@ func (p *ArangoDB) Init(){
 	p.openCollection(COLLECTION_UPDATE)
 }
 
-func (p *ArangoDB) GetAllUsers() (users []*models.User){
+func (p *ArangoDB) GetAllUsers() (users []*models.User) {
 	cursor, err := p.queryUserConditions("")
-	if err != nil{
+	if err != nil {
 		log.Debug(fmt.Sprintf("GetAllUsers() error, detail%v\n", err))
 		return nil
 	}
 	defer cursor.Close()
 	users = make([]*models.User, 0)
-	for cursor.HasMore(){
+	for cursor.HasMore() {
 		var user models.User
 		_, err := cursor.ReadDocument(context.Background(), &user)
 		if err != nil {
@@ -62,14 +63,14 @@ func (p *ArangoDB) GetAllUsers() (users []*models.User){
 }
 
 //通过名称获取用户
-func (p *ArangoDB) GetUserByName(username string) (*models.User){
+func (p *ArangoDB) GetUserByName(username string) *models.User {
 	cursor, err := p.queryUserConditions(username)
-	if err != nil{
+	if err != nil {
 		log.Debug(fmt.Sprintf("GetUserByName() error, detail%v\n", err))
 		return nil
 	}
 	defer cursor.Close()
-	for cursor.HasMore(){
+	for cursor.HasMore() {
 		var user models.User
 		_, err := cursor.ReadDocument(context.Background(), &user)
 		if err != nil {
@@ -82,19 +83,18 @@ func (p *ArangoDB) GetUserByName(username string) (*models.User){
 }
 
 //更新或者插入用户
-func (p *ArangoDB) UpsertUser(user models.User){
+func (p *ArangoDB) UpsertUser(user models.User) {
 	bindVar := map[string]interface{}{
-		"doc": user,
-		"key": user.Key,
+		"doc":         user,
+		"key":         user.Key,
 		"@collection": COLLECTION_USER,
 	}
 	err := p.upsert(bindVar)
-	if err == nil{
+	if err == nil {
 	}
 }
 
-
-func (p *ArangoDB)initConnection(address string){
+func (p *ArangoDB) initConnection(address string) {
 	defer func() {
 		if err := recover(); err != nil {
 			log.Error(fmt.Sprintf("arangodb.go : initConnection() %v %+v", err, string(debug.Stack())))
@@ -227,17 +227,16 @@ func (p *ArangoDB) describe(err error) string {
 
 ////////////////////////////////////////////////////////////////////////
 //获取用户的通用方法
-func (p *ArangoDB) queryUserConditions(username string) (out godriver.Cursor, e error){
+func (p *ArangoDB) queryUserConditions(username string) (out godriver.Cursor, e error) {
 	aql := `FOR u in user
 				return u`
-	bindVar := map[string]interface{}{
-	}
-	if strings.Compare(strings.Trim(username, " "), "") != 0{
+	bindVar := map[string]interface{}{}
+	if strings.Compare(strings.Trim(username, " "), "") != 0 {
 		aql = `FOR u in user
 				FILTER u.user == @UserName
 				return u`
 		bindVar = map[string]interface{}{
-			"UserName":username,
+			"UserName": username,
 		}
 	}
 
@@ -247,11 +246,12 @@ func (p *ArangoDB) queryUserConditions(username string) (out godriver.Cursor, e 
 	}
 	return cursor, err
 }
+
 ////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////
 //通用插入与更新
-func (p *ArangoDB) upsert(bindVar map[string]interface{}) error{
+func (p *ArangoDB) upsert(bindVar map[string]interface{}) error {
 	aql := `
 			UPSERT { _key: @key }
 				INSERT @doc
@@ -266,7 +266,7 @@ func (p *ArangoDB) upsert(bindVar map[string]interface{}) error{
 	}
 	defer cursor.Close()
 	ret := struct {
-		Type        string
+		Type string
 	}{}
 	_, err = cursor.ReadDocument(context.Background(), &ret)
 	if err != nil {
@@ -276,4 +276,5 @@ func (p *ArangoDB) upsert(bindVar map[string]interface{}) error{
 	log.Info(fmt.Sprintf("UPSERT %v Success %v Type %v.", bindVar["@collection"], bindVar["key"], ret.Type))
 	return nil
 }
+
 ////////////////////////////////////////////////////////////////////////

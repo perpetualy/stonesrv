@@ -2,24 +2,28 @@ package controllers
 
 import "github.com/gin-gonic/gin"
 
-//测试端口
+//PingPong 测试
 type PingPong struct {
 	Controllers
 }
 
-func (p *PingPong) GetGroup() string{
+//GetGroup 分组 /
+func (p *PingPong) GetGroup() string {
 	return "/"
 }
 
-func (p *PingPong) GetRelativePath() string{
+//GetRelativePath 路径 ping
+func (p *PingPong) GetRelativePath() string {
 	return "ping"
 }
 
-func (p *PingPong) GetMethod() string{
+//GetMethod 方法 GET
+func (p *PingPong) GetMethod() string {
 	return "GET"
 }
 
-func (p *PingPong) GetFunc() func(context *gin.Context){
+//GetFunc 测试实现
+func (p *PingPong) GetFunc() func(context *gin.Context) {
 	return func(context *gin.Context) {
 		context.String(200, "pong")
 	}

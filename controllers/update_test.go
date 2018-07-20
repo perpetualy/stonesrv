@@ -3,6 +3,7 @@ package controllers
 import (
 	"stonesrv/conf"
 	"testing"
+
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -25,7 +26,7 @@ func TestUpdateGetRelativePath(t *testing.T) {
 		update := Update{}
 		relativePath := update.GetRelativePath()
 		Convey("获取相对路径 ", func() {
-			So(relativePath, ShouldEqual, "update")
+			So(relativePath, ShouldEqual, "/update")
 		})
 	})
 }
@@ -45,7 +46,7 @@ func TestUpdateGetMethod(t *testing.T) {
 //UpdateRequest测试
 func TestUpdateRequest(t *testing.T) {
 	Convey("【测试】 UpdateRequest", t, func() {
-		
+
 		Convey("UpdateRequest ", func() {
 			So(1, ShouldEqual, 1)
 		})

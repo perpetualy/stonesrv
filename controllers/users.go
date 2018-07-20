@@ -1,47 +1,51 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
-	"stonesrv/log"
 	"fmt"
-	"time"
-	"strings"
 	"stonesrv/accounts"
 	"stonesrv/database"
+	"stonesrv/log"
 	"stonesrv/models"
+	"strings"
+	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
-//注册用户
+//Register 注册用户
 type Register struct {
 	Controllers
 	Db database.DataBase
 }
 
-func (p *Register) GetGroup() string{
+//GetGroup 空
+func (p *Register) GetGroup() string {
 	return ""
 }
 
-func (p *Register) GetRelativePath() string{
+//GetRelativePath 路径/usr/register
+func (p *Register) GetRelativePath() string {
 	return "/usr/register"
 }
 
-func (p *Register) GetMethod() string{
+//GetMethod 方法 POST
+func (p *Register) GetMethod() string {
 	return "POST"
 }
 
-//注册
-func (p *Register) GetFunc() func(context *gin.Context){
+//GetFunc 注册方法实现
+func (p *Register) GetFunc() func(context *gin.Context) {
 	return func(context *gin.Context) {
 		var json struct {
-			User 		string `json:"user" binding:"required"`
-			Password 	string `json:"password" binding:"required"`   //MD5以后的值
-			Email       string `json:"email" binding:"required"`
-			Address     string `json:"address" binding:"required"`
-			FullName    string `json:"fullname" binding:"required"`
+			User     string `json:"user" binding:"required"`
+			Password string `json:"password" binding:"required"` //MD5以后的值
+			Email    string `json:"email" binding:"required"`
+			Address  string `json:"address" binding:"required"`
+			FullName string `json:"fullname" binding:"required"`
 
-			Mac         string `json:"mail" binding:"required"`
-			Disk0       string `json:"disk0" binding:"required"`
-			Salt 		int64  `json:"salt" binding:"required"`
+			Mac   string `json:"mail" binding:"required"`
+			Disk0 string `json:"disk0" binding:"required"`
+			Salt  int64  `json:"salt" binding:"required"`
 		}
 		err := context.Bind(&json)
 		if err != nil {
@@ -61,80 +65,86 @@ func (p *Register) GetFunc() func(context *gin.Context){
 
 		key := strings.ToLower(fmt.Sprintf("%s_%d_%s_%s", json.User, json.Salt, json.Mac, json.Disk0))
 		user := models.User{
-			Key:key,   //客户端转为小写 + 下划线 + Salt + 下划线 + ENCODE(SALT MAC) + 下划线 + ENCODE(SALT DISK)
-			User:json.User	,
-			Password:json.Password, // 真实密码 MD5 + ENCODE(SALT)
-			Email:json.Email,
-			Address:json.Address,
-			FullName:json.FullName,
+			Key:      key, //客户端转为小写 + 下划线 + Salt + 下划线 + ENCODE(SALT MAC) + 下划线 + ENCODE(SALT DISK)
+			User:     json.User,
+			Password: json.Password, // 真实密码 MD5 + ENCODE(SALT)
+			Email:    json.Email,
+			Address:  json.Address,
+			FullName: json.FullName,
 
-			Mac:json.Mac,//"1C:1B:0D:A9:3F:79",  //ENCODE(SALT)
-			Disk0:json.Disk0,//"20935UKALWV28LA8923SDF", //ENCODE(SALT)
-			Salt:json.Salt,
-			RegDate: fmt.Sprintf("%d-%d-%d", nowyear, nowmonth, nowday),   //生成注册时间
-			ExpDate: fmt.Sprintf("%d-%d-%d", expyear, expmonth, expday),   //生成到期时间, 默认试用一个月
-			Activated: 1,															//用户默认激活状态
+			Mac:       json.Mac,   //"1C:1B:0D:A9:3F:79",  //ENCODE(SALT)
+			Disk0:     json.Disk0, //"20935UKALWV28LA8923SDF", //ENCODE(SALT)
+			Salt:      json.Salt,
+			RegDate:   fmt.Sprintf("%d-%d-%d", nowyear, nowmonth, nowday), //生成注册时间
+			ExpDate:   fmt.Sprintf("%d-%d-%d", expyear, expmonth, expday), //生成到期时间, 默认试用一个月
+			Activated: 1,                                                  //用户默认激活状态
 		}
 		p.Db.UpsertUser(user)
 		accounts.AddAccount(user.User, user.Password)
-		context.JSON(200, gin.H{"status": "ok", "User":user.User})
+		context.JSON(200, gin.H{"status": "ok", "User": user.User})
 	}
 }
 
-
-//登录
+//Login 登录控制器
 type Login struct {
 	Controllers
 }
 
-func (p *Login) GetGroup() string{
+//GetGroup 空
+func (p *Login) GetGroup() string {
 	return ""
 }
 
-func (p *Login) GetRelativePath() string{
-	return "usr/login"
+//GetRelativePath 路径 /usr/login
+func (p *Login) GetRelativePath() string {
+	return "/usr/login"
 }
 
-func (p *Login) GetMethod() string{
+//GetMethod 方法 POST
+func (p *Login) GetMethod() string {
 	return "POST"
 }
 
-func (p *Login) GetFunc() func(context *gin.Context){
+//GetFunc 登录方法实现
+func (p *Login) GetFunc() func(context *gin.Context) {
 	return func(context *gin.Context) {
 		user, _ := context.GetPostForm("user")
 		// Parse JSON
 		var json struct {
-			Value string `json:"value" binding:"required"`
+			Value  string `json:"value" binding:"required"`
 			MyData string `json:"mydata"`
 		}
 		//登录后返回TOKEN，用户需要在客户端保存TOKEN
 		//token有效期为 10分钟
 
 		if context.Bind(&json) == nil {
-			context.JSON(200, gin.H{"status": "ok", "User":user, "Value":json.Value, "MyData": json.MyData})
+			context.JSON(200, gin.H{"status": "ok", "User": user, "Value": json.Value, "MyData": json.MyData})
 		}
 	}
 }
 
-
-//登出
+//Logout 登出控制器
 type Logout struct {
 	Controllers
 }
 
-func (p *Logout) GetGroup() string{
+//GetGroup 空
+func (p *Logout) GetGroup() string {
 	return ""
 }
 
-func (p *Logout) GetRelativePath() string{
-	return "logout"
+//GetRelativePath 路径 /usr/logout
+func (p *Logout) GetRelativePath() string {
+	return "/usr/logout"
 }
 
-func (p *Logout) GetMethod() string{
-	return "GET"
+//GetMethod 方法 POST
+func (p *Logout) GetMethod() string {
+	return "POST"
 }
 
-func (p *Logout) GetFunc() func(context *gin.Context){
+//GetFunc 注销方法实现
+func (p *Logout) GetFunc() func(context *gin.Context) {
 	return func(context *gin.Context) {
 		//使用用户名密码可以注销
 		context.String(200, "pong")

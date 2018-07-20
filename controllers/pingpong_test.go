@@ -3,6 +3,7 @@ package controllers
 import (
 	"stonesrv/conf"
 	"testing"
+
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -45,7 +46,7 @@ func TestPingPongGetMethod(t *testing.T) {
 //PingPongRequest测试
 func TestPingPongRequest(t *testing.T) {
 	Convey("【测试】 PingPongRequest", t, func() {
-		
+
 		Convey("PingPongRequest ", func() {
 			So(1, ShouldEqual, 1)
 		})

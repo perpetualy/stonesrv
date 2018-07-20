@@ -7,22 +7,22 @@ type DataBase interface {
 
 	GetAllUsers() []*models.User
 	GetUserByName(string) *models.User
-	
+
 	UpsertUser(models.User)
 }
 
 var db *DB
 
-func Init(){
+func Init() {
 	db := &DB{}
 	db.CurrentDB = &ArangoDB{}
 	db.CurrentDB.Init()
 }
 
-type DB struct{
+type DB struct {
 	CurrentDB DataBase
 }
 
-func GetDatabase() DataBase{
+func GetDatabase() DataBase {
 	return db.CurrentDB
 }

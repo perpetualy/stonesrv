@@ -3,6 +3,7 @@ package controllers
 import (
 	"stonesrv/conf"
 	"testing"
+
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -45,7 +46,7 @@ func TestAdminGetMethod(t *testing.T) {
 //Adminlogin函数测试
 func TestAdminLogin(t *testing.T) {
 	Convey("【测试】 AdminLogin", t, func() {
-		
+
 		Convey("登录 ", func() {
 			So(1, ShouldEqual, 1)
 		})

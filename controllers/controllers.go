@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//控制器接口
+//Controllers 控制器接口
 type Controllers interface {
 	//获取分组
 	GetGroup() string

@@ -1,68 +1,75 @@
 package conf
 
 import (
-	"strings"
-	"gopkg.in/ini.v1"
-	"stonesrv/models"
-	"stonesrv/log"
 	"fmt"
+	"stonesrv/log"
+	"stonesrv/models"
+	"strings"
+
+	"gopkg.in/ini.v1"
 )
 
 var conf = newConfig()
 
-func newConfig() *Conf{
+//newConfig 新建配置文件对象
+func newConfig() *Conf {
 	c := &Conf{
-		confPath : "conf/stonesrv.cfg",
+		confPath: "conf/stonesrv.cfg",
 	}
 	return c
 }
 
-type Conf struct{
+//Conf 配置文件
+type Conf struct {
 	confPath string
 	config   models.Config
 }
 
-func Init(path string){
+//Init 初始化方法
+func Init(path string) {
 	conf = newConfig()
-	if strings.Compare(path, "") != 0{
+	if strings.Compare(path, "") != 0 {
 		conf.confPath = path
 	}
 	conf.initConfig()
 }
 
-func GetDBAddress() string{
+//GetDBAddress 获取数据库地址
+func GetDBAddress() string {
 	return conf.config.DBAddress
 }
 
-func GetServerAddress() string{
+//GetServerAddress 获取服务器地址
+func GetServerAddress() string {
 	return conf.config.ServerAddress
 }
 
-func GetServerPort() string{
+//GetServerPort 获取服务器端口
+func GetServerPort() string {
 	return conf.config.ServerPort
 }
 
-//初始化配置文件
-func (p *Conf)initConfig() {
-	config,err := p.readConfig() 
+//initConfig 初始化配置文件
+func (p *Conf) initConfig() {
+	config, err := p.readConfig()
 	if err != nil {
-		log.Error(fmt.Sprintf("%v",err))
+		log.Error(fmt.Sprintf("%v", err))
 		panic(-1)
 	}
-	log.Info(fmt.Sprintf("Config file read %+v",config))
+	log.Info(fmt.Sprintf("Config file read %+v", config))
 	p.config = config
 }
 
-//读取配置文件并转成结构体
-func (p *Conf)readConfig() (models.Config, error) {
+//readConfig 读取配置文件并转成结构体
+func (p *Conf) readConfig() (models.Config, error) {
 	var config models.Config
-	conf, err := ini.Load(p.confPath)   //加载配置文件
+	conf, err := ini.Load(p.confPath) //加载配置文件
 	if err != nil {
 		log.Error("load config file fail!")
 		return config, err
 	}
 	conf.BlockMode = false
-	err = conf.MapTo(&config)   //解析成结构体
+	err = conf.MapTo(&config) //解析成结构体
 	if err != nil {
 		log.Error("mapto config file fail!")
 		return config, err
