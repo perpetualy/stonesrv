@@ -20,7 +20,19 @@ func TestConfGetServerAddress(t *testing.T) {
 	Convey("【测试】 GetServerAddress", t, func() {
 		address := GetServerAddress()
 		Convey("获取服务器地址 ", func() {
-			So(address, ShouldEqual, "127.0.0.1:8621")
+			So(address, ShouldEqual, "127.0.0.1")
 		})
+
+	})
+}
+
+//GetServerPort函数测试
+func TestConfGetServerPort(t *testing.T) {
+	Convey("【测试】 GetServerPort", t, func() {
+		port := GetServerPort()
+		Convey("获取服务器端口 ", func() {
+			So(port, ShouldEqual, "8621")
+		})
+
 	})
 }

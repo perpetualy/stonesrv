@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"stonesrv/conf"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"runtime/debug"
@@ -25,9 +26,9 @@ type Routers struct {
 
 //初始化服务地址
 //初始化BASIC认证账号
-func Init(address string){
+func Init(){
 	rou.routerEng = gin.Default()
-	rou.address = address
+	rou.address = fmt.Sprintf("%s:%s", conf.GetServerAddress(), conf.GetServerPort())
 }
 
 //添加控制器
