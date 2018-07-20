@@ -61,6 +61,7 @@ func (p *ArangoDB) GetAllUsers() (users []*models.User){
 	return users
 }
 
+//通过名称获取用户
 func (p *ArangoDB) GetUserByName(username string) (*models.User){
 	cursor, err := p.queryUserConditions(username)
 	if err != nil{
@@ -80,6 +81,7 @@ func (p *ArangoDB) GetUserByName(username string) (*models.User){
 	return nil
 }
 
+//更新或者插入用户
 func (p *ArangoDB) UpsertUser(user models.User){
 	bindVar := map[string]interface{}{
 		"doc": user,
@@ -129,6 +131,7 @@ func (p *ArangoDB) initClient(user string, password string) {
 	log.Info(fmt.Sprintf("DBClient %v .", p.DbClient))
 }
 
+//打开数据库
 func (p *ArangoDB) openDb(name string) {
 	if p.err != nil {
 		return
@@ -137,6 +140,7 @@ func (p *ArangoDB) openDb(name string) {
 	log.Info(fmt.Sprintf("Database %v .", p.Database))
 }
 
+//打开集合
 func (p *ArangoDB) openCollection(name string) {
 	if p.err != nil {
 		return
@@ -145,6 +149,7 @@ func (p *ArangoDB) openCollection(name string) {
 	log.Info(fmt.Sprintf("Collection %v .", name))
 }
 
+//保证数据库存在
 func (p *ArangoDB) ensureDatabase(ctx context.Context, name string, options *godriver.CreateDatabaseOptions) godriver.Database {
 	defer func() {
 		if err := recover(); err != nil {
@@ -171,6 +176,7 @@ func (p *ArangoDB) ensureDatabase(ctx context.Context, name string, options *god
 	return db
 }
 
+//保证集合存在
 func (p *ArangoDB) ensureCollection(ctx context.Context, name string, options *godriver.CreateCollectionOptions) godriver.Collection {
 	defer func() {
 		if err := recover(); err != nil {
