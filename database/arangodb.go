@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"runtime/debug"
 	"stonesrv/conf"
+	"stonesrv/env"
 	"stonesrv/log"
 	"stonesrv/models"
 	"strings"
@@ -40,8 +41,8 @@ func (p *ArangoDB) Init() {
 	p.initConnection(p.address)
 	p.initClient(p.user, p.password)
 	p.openDb(p.dbname)
-	p.openCollection(CollectionUser)
-	p.openCollection(CollectionUpdate)
+	p.openCollection(env.CollectionUser)
+	p.openCollection(env.CollectionUpdate)
 }
 
 //GetAllUsers 获取所有的用户
@@ -90,7 +91,7 @@ func (p *ArangoDB) UpsertUser(user models.User) {
 	bindVar := map[string]interface{}{
 		"doc":         user,
 		"key":         user.Key,
-		"@collection": CollectionUser,
+		"@collection": env.CollectionUser,
 	}
 	err := p.upsert(bindVar)
 	if err == nil {

@@ -50,7 +50,7 @@ func (p *Register) GetFunc() func(context *gin.Context) {
 		err := context.Bind(&json)
 		if err != nil {
 			log.Error(fmt.Sprintf("Register JSON error %+v", err))
-			context.JSON(80000, gin.H{"status": "Reg failed"})
+			context.JSON(8000, gin.H{"status": "Reg failed"})
 			return
 		}
 
