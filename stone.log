@@ -1,14 +1,14 @@
 Stone - [Info]: Config file read {DBAddress:127.0.0.1 ServerAddress:127.0.0.1 ServerPort:8621}
-Stone - [Info]: DBConnection &{0x994310 [0xc4201d3360] [http://127.0.0.1:8529] 0 {{0 0} 0 0 0 0} 540000000000 <nil>} .
-Stone - [Info]: DBClient &{0xc42023ad90} .
-Stone - [Info]: Database &{stone 0xc42023ad90} .
+Stone - [Info]: DBConnection &{0x994310 [0xc42019d360] [http://127.0.0.1:8529] 0 {{0 0} 0 0 0 0} 540000000000 <nil>} .
+Stone - [Info]: DBClient &{0xc4201eed90} .
+Stone - [Info]: Database &{stone 0xc4201eed90} .
 Stone - [Info]: Collection user .
 Stone - [Info]: Collection update .
 Stone - [Info]: Users:[]
 Stone - [Info]: User:<nil>
-Stone - [Info]: regControllers() /usr/login 0xc4202d6050  POST
-Stone - [Info]: regControllers() /usr/logout 0xc4202d6060  POST
-Stone - [Info]: regControllers() /update 0xc4202d6078  GET
-Stone - [Info]: regControllers() admin 0xc4202d6088 / POST
-Stone - [Info]: regControllers() ping 0xc4202d60a0 / GET
-Stone - [Info]: regControllers() /usr/register 0xc4202d60b8  POST
+Stone - [Info]: regControllers() ping 0xc42022a0c0 / GET
+Stone - [Info]: regControllers() /usr/register 0xc42022a0d0  POST
+Stone - [Info]: regControllers() /usr/login 0xc42022a0e0  POST
+Stone - [Info]: regControllers() /usr/logout 0xc42022a0f8  POST
+Stone - [Info]: regControllers() /update 0xc42022a110  GET
+Stone - [Info]: regControllers() admin 0xc42022a128 / POST
