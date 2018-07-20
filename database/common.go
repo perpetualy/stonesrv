@@ -1,6 +1,8 @@
 package database
 
 var (
-	COLLECTION_USER   = "user"
-	COLLECTION_UPDATE = "update"
+	//CollectionUser 用户集合
+	CollectionUser = "user"
+	//CollectionUpdate 更新集合
+	CollectionUpdate = "update"
 )

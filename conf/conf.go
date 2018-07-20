@@ -14,7 +14,7 @@ var conf = newConfig()
 //newConfig 新建配置文件对象
 func newConfig() *Conf {
 	c := &Conf{
-		confPath: "conf/stonesrv.cfg",
+		confPath: "./conf/stonesrv.cfg",
 	}
 	return c
 }

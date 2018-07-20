@@ -1,16 +1,14 @@
+Stone - [Info]: Config file read {DBAddress:127.0.0.1 ServerAddress:127.0.0.1 ServerPort:8621}
+Stone - [Info]: DBConnection &{0x994310 [0xc4202246e0] [http://127.0.0.1:8529] 0 {{0 0} 0 0 0 0} 540000000000 <nil>} .
+Stone - [Info]: DBClient &{0xc4202239d0} .
+Stone - [Info]: Database &{stone 0xc4202239d0} .
+Stone - [Info]: Collection user .
+Stone - [Info]: Collection update .
 Stone - [Info]: Users:[]
 Stone - [Info]: User:<nil>
-Stone - [Info]: regControllers() ping 0xc42000e5b8 / GET
-Stone - [Info]: regControllers() /usr/register 0xc42000e5c8  POST
-Stone - [Info]: regControllers() usr/login 0xc42000e5d8  POST
-Stone - [Info]: regControllers() logout 0xc42000e5f0  GET
-Stone - [Info]: regControllers() update 0xc42000e608  GET
-Stone - [Info]: regControllers() admin 0xc42000e618 / POST
-[GIN] 2018/07/20 - 00:49:01 | 404 [0m|         702ns |       127.0.0.1 |  GET [0m    /admin
-[GIN] 2018/07/20 - 00:49:24 | 400 [0m|      69.575µs |       127.0.0.1 |  POST [0m    /admin
-[GIN] 2018/07/20 - 00:50:02 | 200 [0m|    40.91599ms |       127.0.0.1 |  POST [0m    /admin
-[GIN] 2018/07/20 - 00:50:34 | 200 [0m|   40.212687ms |       127.0.0.1 |  POST [0m    /usr/login
-[GIN] 2018/07/20 - 00:50:47 | 200 [0m|   41.277762ms |       127.0.0.1 |  POST [0m    /usr/login
-[GIN] 2018/07/20 - 00:51:50 | 200 [0m|   40.781714ms |       127.0.0.1 |  POST [0m    /usr/login
-[GIN] 2018/07/20 - 00:52:01 | 200 [0m|   41.022709ms |       127.0.0.1 |  POST [0m    /usr/login
-[GIN] 2018/07/20 - 00:52:08 | 200 [0m|   44.067723ms |       127.0.0.1 |  POST [0m    /usr/login
+Stone - [Info]: regControllers() ping 0xc4201fe190 / GET
+Stone - [Info]: regControllers() /usr/register 0xc4201fe1a0  POST
+Stone - [Info]: regControllers() /usr/login 0xc4201fe1b0  POST
+Stone - [Info]: regControllers() /usr/logout 0xc4201fe1c8  POST
+Stone - [Info]: regControllers() /update 0xc4201fe1e0  GET
+Stone - [Info]: regControllers() admin 0xc4201fe1f8 / POST
