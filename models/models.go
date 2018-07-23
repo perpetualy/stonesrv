@@ -1,12 +1,13 @@
 package models
 
+//Config 配置文件
 type Config struct { //ini 配置文件
 	DBAddress     string `ini:"DBAddress"`
 	ServerAddress string `ini:"ServerAddress"`
 	ServerPort    string `ini:"ServerPort"`
 }
 
-//用户信息
+//User 用户信息
 type User struct {
 	Key      string `json:"_key,omitempty"`
 	User     string `json:"user"`
@@ -22,3 +23,4 @@ type User struct {
 	ExpDate   string `json:"expdate"`
 	Activated int64  `json:"activated"`
 }
+

@@ -47,7 +47,7 @@ func (p *ArangoDB) Init() {
 
 //GetAllUsers 获取所有的用户
 func (p *ArangoDB) GetAllUsers() (users []*models.User) {
-	cursor, err := p.queryUserConditions("")
+	cursor, err := p.queryUserConditions("", "")
 	if err != nil {
 		log.Debug(fmt.Sprintf("GetAllUsers() error, detail%v\n", err))
 		return nil
@@ -66,9 +66,29 @@ func (p *ArangoDB) GetAllUsers() (users []*models.User) {
 	return users
 }
 
+//GetUserByKey 通过Key获取用户
+func (p *ArangoDB) GetUserByKey(key string) *models.User {
+	cursor, err := p.queryUserConditions("", key)
+	if err != nil {
+		log.Debug(fmt.Sprintf("GetUserByKey() error, detail%v\n", err))
+		return nil
+	}
+	defer cursor.Close()
+	for cursor.HasMore() {
+		var user models.User
+		_, err := cursor.ReadDocument(context.Background(), &user)
+		if err != nil {
+			log.Debug(fmt.Sprintf("GetUserByKey() error, detail%v\n", err))
+			return nil
+		}
+		return &user
+	}
+	return nil
+}
+
 //GetUserByName 通过名称获取用户
 func (p *ArangoDB) GetUserByName(username string) *models.User {
-	cursor, err := p.queryUserConditions(username)
+	cursor, err := p.queryUserConditions(username, "")
 	if err != nil {
 		log.Debug(fmt.Sprintf("GetUserByName() error, detail%v\n", err))
 		return nil
@@ -233,7 +253,7 @@ func (p *ArangoDB) describe(err error) string {
 }
 
 //queryUserConditions 获取用户的通用方法
-func (p *ArangoDB) queryUserConditions(username string) (out godriver.Cursor, e error) {
+func (p *ArangoDB) queryUserConditions(username string, key string) (out godriver.Cursor, e error) {
 	aql := `FOR u in user
 				return u`
 	bindVar := map[string]interface{}{}
@@ -243,6 +263,14 @@ func (p *ArangoDB) queryUserConditions(username string) (out godriver.Cursor, e 
 				return u`
 		bindVar = map[string]interface{}{
 			"UserName": username,
+		}
+	}
+	if strings.Compare(strings.Trim(key, " "), "") != 0{
+		aql = `FOR u in user
+				FILTER u._key == @Key
+				return u`
+		bindVar = map[string]interface{}{
+			"Key": key,
 		}
 	}
 

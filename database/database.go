@@ -7,6 +7,7 @@ type DataBase interface {
 	Init()
 
 	GetAllUsers() []*models.User
+	GetUserByKey(string) *models.User
 	GetUserByName(string) *models.User
 
 	UpsertUser(models.User)

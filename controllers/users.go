@@ -108,18 +108,39 @@ func (p *Login) GetMethod() string {
 //GetFunc 登录方法实现
 func (p *Login) GetFunc() func(context *gin.Context) {
 	return func(context *gin.Context) {
-		user, _ := context.GetPostForm("user")
 		// Parse JSON
-		var json struct {
-			Value  string `json:"value" binding:"required"`
-			MyData string `json:"mydata"`
+		loginRequest := models.LoginRequest{}
+		if context.Bind(&loginRequest) != nil {
+			context.JSON(203, gin.H{"status": "登录失败，参数不正确"})
+			return
 		}
-		//登录后返回TOKEN，用户需要在客户端保存TOKEN
-		//token有效期为 10分钟
-
-		if context.Bind(&json) == nil {
-			context.JSON(200, gin.H{"status": "ok", "User": user, "Value": json.Value, "MyData": json.MyData})
+		key := fmt.Sprintf("%s%s%s", loginRequest.User, loginRequest.MAC, loginRequest.Disk0)
+		usr := database.GetDatabase().GetUserByKey(key)
+		//查询用户是否存在
+		if usr == nil{
+			//用户不存在 返回
+			context.JSON(203, gin.H{"status": "登录失败，用户不存在"})
+			return
 		}
+		//检验密码
+		if strings.Compare(loginRequest.Password, usr.Password) != 0 {
+			//密码不正确
+			context.JSON(203, gin.H{"status": "登录失败，密码不正确"})
+			return
+		}
+		if usr.Activated != 1{
+			//用户已经过期
+			context.JSON(203, gin.H{"status": "登录失败，用户已经过期"})
+			return			
+		}
+		//查找PRIVATE KEY
+		//如果PRIVATE KEY存在
+		//使用PRIVATE KEY解密 内容 这里需要考虑要解密的内容
+		//验证
+		//返回SESSIONID和user
+		//JSON用PRIVATE KEY加密
+		//客户端需要维护SESSION和USER
+		context.JSON(200, gin.H{"status": "登录成功","msg":"XXXXXXXYYYYYYYY"})
 	}
 }
 
@@ -146,7 +167,23 @@ func (p *Logout) GetMethod() string {
 //GetFunc 注销方法实现
 func (p *Logout) GetFunc() func(context *gin.Context) {
 	return func(context *gin.Context) {
-		//使用用户名密码可以注销
-		context.String(200, "pong")
+		// Parse JSON
+		logoutRequest := models.LogoutRequest{}
+		if context.Bind(&logoutRequest) != nil {
+			context.JSON(203, gin.H{"status": "登出失败，参数不正确"})
+			return
+		}
+		key := fmt.Sprintf("%s%s%s", logoutRequest.User, logoutRequest.MAC, logoutRequest.Disk0)
+		usr := database.GetDatabase().GetUserByKey(key)
+		//查询用户是否存在
+		if usr == nil{
+			//用户不存在 返回
+			context.JSON(203, gin.H{"status": "登出失败，用户不存在"})
+			return
+		}
+		//查询用户的SESSIONID
+		//删掉服务器对应的SESSIONID
+		//登出成功 
+		context.JSON(200, gin.H{"status": "登出成功"})
 	}
 }
