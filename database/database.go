@@ -15,6 +15,7 @@ type DataBase interface {
 	//用户
 	GetAllUsers() []*models.User
 	IsUserExist(key string) bool
+	GetUserByKey(string) *models.User
 	GetUserByName(string) *models.User
 	InsertUser(models.User) error
 	UpsertUser(models.User) error

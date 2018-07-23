@@ -147,6 +147,26 @@ func (p *ArangoDB) IsUserExist(key string) bool {
 	return false
 }
 
+//GetUserByKey 通过Key获取用户
+func (p *ArangoDB) GetUserByKey(key string) *models.User {
+	cursor, err := p.queryDocByKey(env.CollectionUser, key)
+	if err != nil {
+		log.Debug(fmt.Sprintf("GetUserByKey() error, detail%v\n", err))
+		return nil
+	}
+	defer cursor.Close()
+	for cursor.HasMore() {
+		var user models.User
+		_, err := cursor.ReadDocument(context.Background(), &user)
+		if err != nil {
+			log.Debug(fmt.Sprintf("GetUserByKey() error, detail%v\n", err))
+			return nil
+		}
+		return &user
+	}
+	return nil
+}
+
 //GetUserByName 通过名称获取用户
 func (p *ArangoDB) GetUserByName(username string) *models.User {
 	cursor, err := p.queryUserByName(username)

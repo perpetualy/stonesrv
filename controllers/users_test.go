@@ -1,7 +1,12 @@
 package controllers
 
 import (
+	"strings"
+	"net/url"
+	"net/http"
+	"github.com/gin-gonic/gin"
 	"stonesrv/conf"
+	"stonesrv/database"
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
@@ -138,9 +143,26 @@ func TestLogoutGetMethod(t *testing.T) {
 //Logout函数测试
 func TestLogout(t *testing.T) {
 	Convey("【测试】 Logout", t, func() {
-
-		Convey("注册 ", func() {
-			So(1, ShouldEqual, 1)
+		
+		logout := Logout{}
+		database.Init()
+		
+		var logouinfo = url.Values{}
+		logouinfo.Add("User", "ddd")
+		logouinfo.Add("P1", "ddd")
+		logouinfo.Add("P2", "ddd")
+		data := logouinfo.Encode()
+		req, err := http.NewRequest("POST", "https://127.0.0.1:8621/usr/logout", strings.NewReader(data))
+		if err != nil{
+			return
+		}
+		req.Header.Add("Content-Type", "application/json; charset=utf-8")
+		c := &gin.Context{
+			Request:req,
+		}
+		logout.GetFunc()(c)
+		Convey("登出 ", func() {
+			So(nil, ShouldEqual, nil)
 		})
 	})
 }
