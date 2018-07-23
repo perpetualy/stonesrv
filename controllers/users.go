@@ -114,7 +114,7 @@ func (p *Login) GetFunc() func(context *gin.Context) {
 			context.JSON(203, gin.H{"status": "登录失败，参数不正确"})
 			return
 		}
-		key := fmt.Sprintf("%s%s%s", loginRequest.User, loginRequest.MAC, loginRequest.Disk0)
+		key := fmt.Sprintf("%s%s%s", loginRequest.User, loginRequest.P1, loginRequest.P2)
 		usr := database.GetDatabase().GetUserByKey(key)
 		//查询用户是否存在
 		if usr == nil{
@@ -167,13 +167,14 @@ func (p *Logout) GetMethod() string {
 //GetFunc 注销方法实现
 func (p *Logout) GetFunc() func(context *gin.Context) {
 	return func(context *gin.Context) {
+		log.Info(fmt.Sprintf("%+v", context))
 		// Parse JSON
 		logoutRequest := models.LogoutRequest{}
 		if context.Bind(&logoutRequest) != nil {
 			context.JSON(203, gin.H{"status": "登出失败，参数不正确"})
 			return
 		}
-		key := fmt.Sprintf("%s%s%s", logoutRequest.User, logoutRequest.MAC, logoutRequest.Disk0)
+		key := fmt.Sprintf("%s%s%s", logoutRequest.User, logoutRequest.P1, logoutRequest.P2)
 		usr := database.GetDatabase().GetUserByKey(key)
 		//查询用户是否存在
 		if usr == nil{
