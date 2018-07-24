@@ -20,7 +20,7 @@ type User struct {
 
 	Mac       string `json:"mac" binding:"required"`
 	Disk0     string `json:"disk0" binding:"required"`
-	Salt      int64  `json:"salt" binding:"required"`
+	Salt      int64  `json:"salt" binding:"required"`		//暂时无用 强制设定为2
 	Duration  int64  `json:"duration" binding:"required"`
 	RegDate   string `json:"regdate"`
 	ExpDate   string `json:"expdate"`

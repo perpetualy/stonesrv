@@ -9,7 +9,7 @@ type Update struct {
 
 //GetGroup 空
 func (p *Update) GetGroup() string {
-	return ""
+	return "/auth"
 }
 
 //GetRelativePath 路径 update

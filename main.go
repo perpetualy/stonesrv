@@ -17,11 +17,10 @@ func main() {
 
 	routers.Init()
 	ctrls := []controllers.Controllers{
-		&controllers.Register{
-			Db: database.GetDatabase(),
-		},
+		&controllers.Register{},
 		&controllers.Login{},
 		&controllers.Logout{},
+		&controllers.UserInfo{},
 		&controllers.Update{},
 		&controllers.Admin{},
 	}

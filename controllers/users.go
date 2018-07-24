@@ -2,9 +2,12 @@ package controllers
 
 import (
 	"fmt"
+	"net/http"
 	"stonesrv/database"
 	"stonesrv/log"
 	"stonesrv/models"
+	"stonesrv/crypto"
+	"stonesrv/env"
 	"strings"
 	"time"
 
@@ -14,7 +17,6 @@ import (
 //Register 注册用户
 type Register struct {
 	Controllers
-	Db database.DataBase
 }
 
 //GetGroup 空
@@ -42,27 +44,27 @@ func (p *Register) register(context *gin.Context) {
 	err := context.Bind(&req)
 	if err != nil {
 		log.Error(fmt.Sprintf("Register JSON error %+v", err))
-		context.JSON(400, gin.H{"status": "Reg failed"})
+		context.JSON(400, gin.H{"status": "注册失败，参数错误"})
 		return
 	}
 
 	key := strings.ToLower(fmt.Sprintf("%s%s%s", req.User, req.Mac, req.Disk0))
 	//查找Key是否存在
 	//如果已经存在，直接返回
-	if p.Db.IsUserExist(key) {
+	if database.GetDatabase().IsUserExist(key) {
 		context.JSON(203, gin.H{"status": fmt.Sprintf("用户 [%s] 已经被注册 ", req.User)})
 		return
 	}
 
 	//验证MAC是否存在
-	if p.Db.IsMACExist(req.Mac) {
+	if database.GetDatabase().IsMACExist(req.Mac) {
 		//MAC存在返回
 		context.JSON(203, gin.H{"status": "这台机器已经被注册，请联系管理员"})
 		return
 	}
 
 	//验证DISK0是否存在
-	if p.Db.IsDisk0Exist(req.Disk0) {
+	if database.GetDatabase().IsDisk0Exist(req.Disk0) {
 		//Disk0存在返回
 		context.JSON(203, gin.H{"status": "这台机器已经被注册，请联系管理员"})
 		return
@@ -75,35 +77,34 @@ func (p *Register) register(context *gin.Context) {
 	}
 
 	now := time.Now()
-	nowyear, nowmonth, nowday := now.Date()
-	expdate := now.AddDate(0, 0, int(req.Duration))
-	expyear, expmonth, expday := expdate.Date()
+	//expdate := now.AddDate(0, 0, int(req.Duration))
+	expdate := now.Add(time.Minute * time.Duration(req.Duration))
 
 	user := req
 	user.Key = key
-	user.RegDate = fmt.Sprintf("%d-%d-%d", nowyear, nowmonth, nowday) //生成注册时间
-	user.ExpDate = fmt.Sprintf("%d-%d-%d", expyear, expmonth, expday) //生成过期时间
+	user.RegDate = now.Format(env.FullDateTimeFormat) //生成注册时间
+	user.ExpDate = expdate.Format(env.FullDateTimeFormat) //生成过期时间
 	user.Activated = 1
 
-	err = p.Db.InsertMAC(models.MAC{Key: user.Mac, UserKey: user.Key})
+	err = database.GetDatabase().InsertMAC(models.MAC{Key: user.Mac, UserKey: user.Key})
 	if err != nil {
 		context.JSON(203, gin.H{"status": fmt.Sprintf("用户 [%s=] 注册失败", req.User)})
 		return
 	}
 
-	err = p.Db.InsertDisk0(models.Disk0{Key: user.Disk0, UserKey: user.Key})
+	err = database.GetDatabase().InsertDisk0(models.Disk0{Key: user.Disk0, UserKey: user.Key})
 	if err != nil {
 		context.JSON(203, gin.H{"status": fmt.Sprintf("用户 [%s=] 注册失败", req.User)})
 		return
 	}
 
-	err = p.Db.InsertUser(user)
+	err = database.GetDatabase().InsertUser(user)
 	if err != nil {
 		context.JSON(203, gin.H{"status": fmt.Sprintf("用户 [%s=] 注册失败", req.User)})
 		return
 	}
 
-	context.JSON(200, gin.H{"status": "ok", "User": user.User})
+	context.JSON(200, gin.H{"status": "注册成功", "User": user.User})
 }
 
 //Login 登录控制器
@@ -128,51 +129,74 @@ func (p *Login) GetMethod() string {
 
 //GetFunc 登录方法实现
 func (p *Login) GetFunc() func(context *gin.Context) {
-	return func(context *gin.Context) {
-		// Parse JSON
-		loginRequest := models.LoginRequest{}
-		if context.Bind(&loginRequest) != nil {
-			context.JSON(203, gin.H{"status": "登录失败，参数不正确"})
-			return
-		}
-		key := fmt.Sprintf("%s%s%s", loginRequest.User, loginRequest.P1, loginRequest.P2)
-		usr := database.GetDatabase().GetUserByKey(key)
-		//查询用户是否存在
-		if usr == nil{
-			//用户不存在 返回
-			context.JSON(203, gin.H{"status": "登录失败，用户不存在"})
-			return
-		}
-		//检验密码
-		if strings.Compare(loginRequest.Password, usr.Password) != 0 {
-			//密码不正确
-			context.JSON(203, gin.H{"status": "登录失败，密码不正确"})
-			return
-		}
-		if usr.Activated != 1{
-			//用户已经过期
-			context.JSON(203, gin.H{"status": "登录失败，用户已经过期"})
-			return			
-		}
-		//查找PRIVATE KEY
-		//如果PRIVATE KEY存在
-		//使用PRIVATE KEY解密 内容 这里需要考虑要解密的内容
-		//验证
-		//返回SESSIONID和user
-		//JSON用PRIVATE KEY加密
-		//客户端需要维护SESSION和USER
-		context.JSON(200, gin.H{"status": "登录成功","msg":"XXXXXXXYYYYYYYY"})
-	}
+	return p.login
 }
 
-//Logout 登出控制器
+//login 登录方法实现
+func (p *Login) login(context *gin.Context) {
+	// Parse JSON
+	loginRequest := models.LoginRequest{}
+	if context.Bind(&loginRequest) != nil {
+		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登录失败，参数不正确"})
+		return
+	}
+	key := fmt.Sprintf("%s%s%s", loginRequest.User, loginRequest.P1, loginRequest.P2)
+	usr := database.GetDatabase().GetUserByKey(key)
+	//查询用户是否存在
+	if usr == nil{
+		//用户不存在 返回
+		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登录失败，用户不存在"})
+		return
+	}
+	//检验密码
+	if strings.Compare(loginRequest.Password, usr.Password) != 0 {
+		//密码不正确
+		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登录失败，密码不正确"})
+		return
+	}
+	if usr.Activated != 1{
+		//用户已经过期
+		context.JSON(http.StatusUnauthorized, gin.H{"status": "登录失败，用户已经失效"})
+		return			
+	}
+	loc, lok  := time.LoadLocation("Local")
+	regDate, pok := time.ParseInLocation(env.FullDateTimeFormat, usr.RegDate, loc)
+	expDate, eok := time.ParseInLocation(env.FullDateTimeFormat, usr.ExpDate, loc)
+	if lok!=nil || pok!=nil || eok != nil{
+		//获取用户时间出错
+		context.JSON(http.StatusUnauthorized, gin.H{"status": "登录失败，获取用户时间出错"})
+		return
+	}
+	locExpDate := regDate.AddDate(0, 0, int(usr.Duration))
+	now := time.Now()
+	if now.After(locExpDate) || now.After(expDate){
+		context.JSON(http.StatusUnauthorized, gin.H{"status": "登录失败，用户已经过期"})
+		return	
+	}
+
+	deltaDuration := locExpDate.Sub(now)
+	duration := int64(deltaDuration.Minutes())
+	
+	//生成TOKEN
+	token := crypto.GenToken(duration, usr.Salt)
+
+	if strings.Compare(token, "") == 0{
+		context.JSON(http.StatusUnauthorized, gin.H{"status": "登录失败，生成TOKEN失败"})
+		return
+	}
+
+	//客户端需要维护token
+	context.JSON(http.StatusOK, gin.H{"status": "登录成功","token":token})
+}
+
+//Logout 登出控制器  暂时无用
 type Logout struct {
 	Controllers
 }
 
 //GetGroup 空
 func (p *Logout) GetGroup() string {
-	return ""
+	return "/auth"
 }
 
 //GetRelativePath 路径 /usr/logout
@@ -185,27 +209,59 @@ func (p *Logout) GetMethod() string {
 	return "POST"
 }
 
-//GetFunc 注销方法实现
+//GetFunc 注销方法实现 
 func (p *Logout) GetFunc() func(context *gin.Context) {
-	return func(context *gin.Context) {
-		log.Info(fmt.Sprintf("%+v", context))
-		// Parse JSON
-		logoutRequest := models.LogoutRequest{}
-		if context.Bind(&logoutRequest) != nil {
-			context.JSON(203, gin.H{"status": "登出失败，参数不正确"})
-			return
-		}
-		key := fmt.Sprintf("%s%s%s", logoutRequest.User, logoutRequest.P1, logoutRequest.P2)
-		usr := database.GetDatabase().GetUserByKey(key)
-		//查询用户是否存在
-		if usr == nil{
-			//用户不存在 返回
-			context.JSON(203, gin.H{"status": "登出失败，用户不存在"})
-			return
-		}
-		//查询用户的SESSIONID
-		//删掉服务器对应的SESSIONID
-		//登出成功 
-		context.JSON(200, gin.H{"status": "登出成功"})
+	return p.logout
+}
+
+//GetFunc 注销方法实现
+func (p *Logout) logout(context *gin.Context) {
+	log.Info(fmt.Sprintf("%+v", context))
+	// Parse JSON
+	logoutRequest := models.LogoutRequest{}
+	if context.Bind(&logoutRequest) != nil {
+		context.JSON(203, gin.H{"status": "登出失败，参数不正确"})
+		return
 	}
+	key := fmt.Sprintf("%s%s%s", logoutRequest.User, logoutRequest.P1, logoutRequest.P2)
+	usr := database.GetDatabase().GetUserByKey(key)
+	//查询用户是否存在
+	if usr == nil{
+		//用户不存在 返回
+		context.JSON(203, gin.H{"status": "登出失败，用户不存在"})
+		return
+	}
+	//登出成功 
+	context.JSON(200, gin.H{"status": "登出成功?"})
+}
+
+//UserInfo 用户信息控制器
+type UserInfo struct {
+	Controllers
+}
+
+//GetGroup 空
+func (p *UserInfo) GetGroup() string {
+	return "/auth"
+}
+
+//GetRelativePath 路径 /usr/logout
+func (p *UserInfo) GetRelativePath() string {
+	return "/usr/info"
+}
+
+//GetMethod 方法 POST
+func (p *UserInfo) GetMethod() string {
+	return "POST"
+}
+
+//GetFunc 获取用户信息方法实现
+func (p *UserInfo) GetFunc() func(context *gin.Context) {
+	return p.getInfo
+}
+
+//GetFunc 获取用户信息方法实现
+func (p *UserInfo) getInfo(context *gin.Context) {
+	log.Info(fmt.Sprintf("User Info %+v", context))
+	context.JSON(200, gin.H{"status": "UserInfo"})
 }

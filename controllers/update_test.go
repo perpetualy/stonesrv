@@ -14,7 +14,7 @@ func TestUpdateGetGroup(t *testing.T) {
 		update := Update{}
 		group := update.GetGroup()
 		Convey("获取分组 ", func() {
-			So(group, ShouldEqual, "")
+			So(group, ShouldEqual, "/auth")
 		})
 	})
 }
