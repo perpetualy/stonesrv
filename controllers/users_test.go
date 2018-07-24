@@ -1,13 +1,14 @@
 package controllers
 
 import (
-	"strings"
-	"net/url"
 	"net/http"
-	"github.com/gin-gonic/gin"
+	"net/url"
 	"stonesrv/conf"
 	"stonesrv/database"
+	"strings"
 	"testing"
+
+	"github.com/gin-gonic/gin"
 
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -111,7 +112,7 @@ func TestLogoutGetGroup(t *testing.T) {
 		logout := Logout{}
 		group := logout.GetGroup()
 		Convey("获取分组 ", func() {
-			So(group, ShouldEqual, "")
+			So(group, ShouldEqual, "/auth")
 		})
 	})
 }
@@ -143,22 +144,23 @@ func TestLogoutGetMethod(t *testing.T) {
 //Logout函数测试
 func TestLogout(t *testing.T) {
 	Convey("【测试】 Logout", t, func() {
-		
+
 		logout := Logout{}
 		database.Init()
-		
+
 		var logouinfo = url.Values{}
 		logouinfo.Add("User", "ddd")
 		logouinfo.Add("P1", "ddd")
 		logouinfo.Add("P2", "ddd")
 		data := logouinfo.Encode()
-		req, err := http.NewRequest("POST", "https://127.0.0.1:8621/usr/logout", strings.NewReader(data))
-		if err != nil{
+		req, err := http.NewRequest("POST", "https://127.0.0.1:8621/auth/usr/logout", strings.NewReader(data))
+		if err != nil {
 			return
 		}
 		req.Header.Add("Content-Type", "application/json; charset=utf-8")
+		req.Header.Add("Authrization", "key")
 		c := &gin.Context{
-			Request:req,
+			Request: req,
 		}
 		logout.GetFunc()(c)
 		Convey("登出 ", func() {
