@@ -25,5 +25,6 @@ func AuthToken() gin.HandlerFunc {
         } else {
             c.String(http.StatusUnauthorized, "该接口未授权")
         }
+        c.Abort()
     }
 }

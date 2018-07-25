@@ -134,6 +134,7 @@ func (p *Login) GetFunc() func(context *gin.Context) {
 
 //login 登录方法实现
 func (p *Login) login(context *gin.Context) {
+	log.Info(fmt.Sprintf("login %+v", context))
 	// Parse JSON
 	loginRequest := models.LoginRequest{}
 	if context.Bind(&loginRequest) != nil {
@@ -156,7 +157,7 @@ func (p *Login) login(context *gin.Context) {
 	}
 	if usr.Activated != 1{
 		//用户已经过期
-		context.JSON(http.StatusUnauthorized, gin.H{"status": "登录失败，用户已经失效"})
+		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登录失败，用户已经失效"})
 		return			
 	}
 	loc, lok  := time.LoadLocation("Local")
@@ -164,13 +165,13 @@ func (p *Login) login(context *gin.Context) {
 	expDate, eok := time.ParseInLocation(env.FullDateTimeFormat, usr.ExpDate, loc)
 	if lok!=nil || pok!=nil || eok != nil{
 		//获取用户时间出错
-		context.JSON(http.StatusUnauthorized, gin.H{"status": "登录失败，获取用户时间出错"})
+		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登录失败，获取用户时间出错"})
 		return
 	}
-	locExpDate := regDate.AddDate(0, 0, int(usr.Duration))
+	locExpDate := regDate.Add(time.Minute * time.Duration(usr.Duration))
 	now := time.Now()
 	if now.After(locExpDate) || now.After(expDate){
-		context.JSON(http.StatusUnauthorized, gin.H{"status": "登录失败，用户已经过期"})
+		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登录失败，用户已经过期"})
 		return	
 	}
 
@@ -181,7 +182,7 @@ func (p *Login) login(context *gin.Context) {
 	token := crypto.GenToken(duration, usr.Salt)
 
 	if strings.Compare(token, "") == 0{
-		context.JSON(http.StatusUnauthorized, gin.H{"status": "登录失败，生成TOKEN失败"})
+		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登录失败，生成TOKEN失败"})
 		return
 	}
 
@@ -216,11 +217,11 @@ func (p *Logout) GetFunc() func(context *gin.Context) {
 
 //GetFunc 注销方法实现
 func (p *Logout) logout(context *gin.Context) {
-	log.Info(fmt.Sprintf("%+v", context))
+	log.Info(fmt.Sprintf("logout %+v", context))
 	// Parse JSON
 	logoutRequest := models.LogoutRequest{}
 	if context.Bind(&logoutRequest) != nil {
-		context.JSON(203, gin.H{"status": "登出失败，参数不正确"})
+		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登出失败，参数不正确"})
 		return
 	}
 	key := fmt.Sprintf("%s%s%s", logoutRequest.User, logoutRequest.P1, logoutRequest.P2)
@@ -228,11 +229,16 @@ func (p *Logout) logout(context *gin.Context) {
 	//查询用户是否存在
 	if usr == nil{
 		//用户不存在 返回
-		context.JSON(203, gin.H{"status": "登出失败，用户不存在"})
+		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登出失败，用户不存在"})
 		return
 	}
 	//登出成功 
-	context.JSON(200, gin.H{"status": "登出成功?"})
+	token := crypto.GenToken(0, usr.Salt)
+	if strings.Compare(token, "") == 0{
+		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登出失败"})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{"status": "登出成功?"})
 }
 
 //UserInfo 用户信息控制器
@@ -262,6 +268,21 @@ func (p *UserInfo) GetFunc() func(context *gin.Context) {
 
 //GetFunc 获取用户信息方法实现
 func (p *UserInfo) getInfo(context *gin.Context) {
-	log.Info(fmt.Sprintf("User Info %+v", context))
-	context.JSON(200, gin.H{"status": "UserInfo"})
+	log.Info(fmt.Sprintf("getInfo %+v", context))
+	// Parse JSON
+	userInfoRequest := models.UserInfoRequest{}
+	if context.Bind(&userInfoRequest) != nil {
+		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "获取用户信息失败，参数不正确"})
+		return
+	}
+	key := fmt.Sprintf("%s%s%s", userInfoRequest.User, userInfoRequest.P1, userInfoRequest.P2)
+	usr := database.GetDatabase().GetUserByKey(key)
+	//查询用户是否存在
+	if usr == nil{
+		//用户不存在 返回
+		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "获取用户信息失败，用户不存在"})
+		return
+	}
+	info := fmt.Sprintf("用户名：%s，全名：%s，公司：%s，地址：%s，电话：%s，邮箱：%s，注册：%s，过期：%s，", usr.User, usr.FullName, usr.Company, usr.Address, usr.Phone, usr.Email, usr.RegDate, usr.ExpDate)
+	context.JSON(http.StatusOK, gin.H{"status": info})
 }

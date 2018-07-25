@@ -14,3 +14,10 @@ type LogoutRequest struct {
 	P1       string `json:"p1" binding:"required"`			//MAC MD5
 	P2     string `json:"p2" binding:"required"`			//Disk0 MD5
 }
+
+//UserInfoRequest 登出结构体
+type UserInfoRequest struct {
+	User      string `json:"user" binding:"required"`		//用户名
+	P1       string `json:"p1" binding:"required"`			//MAC MD5
+	P2     string `json:"p2" binding:"required"`			//Disk0 MD5
+}
