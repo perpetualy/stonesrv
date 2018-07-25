@@ -49,6 +49,16 @@ func GetServerPort() string {
 	return conf.config.ServerPort
 }
 
+//GetSSLCrtFile 获取SSL CRT证书
+func GetSSLCrtFile() string{
+	return conf.config.SSLCrtFile
+}
+
+//GetSSLKeyFile 获取SSL KEY
+func GetSSLKeyFile() string{
+	return conf.config.SSLKeyFile
+}
+
 //initConfig 初始化配置文件
 func (p *Conf) initConfig() {
 	config, err := p.readConfig()

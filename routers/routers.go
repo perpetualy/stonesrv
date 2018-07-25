@@ -21,16 +21,8 @@ func newRouters() *Routers {
 
 //Routers 路由
 type Routers struct {
-	address     string
 	routerEng   *gin.Engine
 	controllers sync.Map
-}
-
-//初始化服务地址
-//Init 初始化BASIC认证账号
-func Init() {
-	rou.routerEng = gin.Default()
-	rou.address = fmt.Sprintf("%s:%s", conf.GetServerAddress(), conf.GetServerPort())
 }
 
 //AddController 添加控制器
@@ -101,20 +93,25 @@ func (p *Routers) regControllers() {
 }
 
 func (p *Routers) run() {
+	//初始化 Eng
+	rou.routerEng = gin.Default()
 
 	//注册控制器
 	p.regControllers()
 
 	//启动监控
-	p.routerEng.Run(p.address)
+	p.routerEng.Run(fmt.Sprintf("%s:%s", conf.GetServerAddress(), conf.GetServerPort()))
 }
 
 func (p *Routers) runTLS() {
+	//初始化 Eng
+	rou.routerEng = gin.Default()
+
 	//注册控制器
 	p.regControllers()
 
 	//启动监控
-	p.routerEng.RunTLS(p.address, "server.crt", "server.key")
+	p.routerEng.RunTLS(fmt.Sprintf("%s:%s", conf.GetServerAddress(), conf.GetServerPort()), conf.GetSSLCrtFile(), conf.GetSSLKeyFile())
 }
 
 func (p *Routers) addController(controller controllers.Controllers) {

@@ -15,7 +15,6 @@ func main() {
 	conf.Init("")
 	database.Init()
 
-	routers.Init()
 	ctrls := []controllers.Controllers{
 		&controllers.Register{},
 		&controllers.Login{},

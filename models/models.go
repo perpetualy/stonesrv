@@ -5,6 +5,8 @@ type Config struct {
 	DBAddress     string `ini:"DBAddress"`
 	ServerAddress string `ini:"ServerAddress"`
 	ServerPort    string `ini:"ServerPort"`
+	SSLCrtFile    string `ini:"SSLCrtFile"`
+	SSLKeyFile    string `ini:"SSLKeyFile"`
 }
 
 //User 用户信息
