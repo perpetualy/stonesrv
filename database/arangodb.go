@@ -41,7 +41,7 @@ func (p *ArangoDB) Init() {
 	p.initClient(p.user, p.password)
 	p.openDb(p.dbname)
 	p.openCollection(env.CollectionUser)
-	p.openCollection(env.CollectionUpdate)
+	p.openCollection(env.CollectionUpdates)
 	p.openCollection(env.CollectionMAC)
 	p.openCollection(env.CollectionDisk0)
 }
@@ -457,7 +457,7 @@ func (p *ArangoDB) upsert(bindVar map[string]interface{}) error {
 
 //查询排序过后的update
 func (p *ArangoDB) queryUpdate() (cursor godriver.Cursor, err error){
-	aql := `FOR upd in update
+	aql := `FOR upd in updates
 			SORT upd.reldate
 			return upd`
 	cursor, err = p.Database.Query(context.Background(), aql, nil)

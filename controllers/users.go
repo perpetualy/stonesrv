@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/gin-gonic/gin/json"
 	"fmt"
 	"net/http"
 	"stonesrv/database"
@@ -71,7 +72,7 @@ func (p *Register) register(context *gin.Context) {
 	}
 
 	//验证使用时长
-	if req.Duration < 0 || req.Duration > 365 {
+	if req.Duration < 0 || req.Duration > 512640 {
 		context.JSON(203, gin.H{"status": "非法的使用时长"})
 		return
 	}
@@ -283,6 +284,22 @@ func (p *UserInfo) getInfo(context *gin.Context) {
 		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "获取用户信息失败，用户不存在"})
 		return
 	}
-	info := fmt.Sprintf("用户名：%s，全名：%s，公司：%s，地址：%s，电话：%s，邮箱：%s，注册：%s，过期：%s，", usr.User, usr.FullName, usr.Company, usr.Address, usr.Phone, usr.Email, usr.RegDate, usr.ExpDate)
-	context.JSON(http.StatusOK, gin.H{"status": info})
+
+	//创建回报
+	rsp := models.UserInfoResponse{
+		User:usr.User,
+		FullName:usr.FullName,
+		Company:usr.Company,
+		Address:usr.Address,
+		Email:usr.Email,
+		Phone:usr.Phone,
+		RegDate:usr.RegDate,
+		ExpDate:usr.ExpDate,
+	}
+	info, err := json.Marshal(rsp)
+	if err != nil{
+		info = []byte("{}")
+	}
+	//info := fmt.Sprintf("{\"用户名\":\"%s\",\"全名\":\"%s\",\"公司\":\"%s\",\"地址\":\"%s\",\"电话\":\"%s\",\"邮箱\":\"%s\",\"注册\":\"%s\",\"过期\":\"%s\"}", usr.User, usr.FullName, usr.Company, usr.Address, usr.Phone, usr.Email, usr.RegDate, usr.ExpDate)
+	context.JSON(http.StatusOK, gin.H{"status": "获取用户信息成功","info":string(info)})
 }

@@ -45,6 +45,8 @@ type Disk0 struct {
 type Update struct {
 	Key     		string `json:"_key,omitempty"`
 	Version 		string `json:"version"`
+	MD5				string `json:"md5"`
 	Info    		string `json:"info"`
+	Force			int64  `json:"force"`
 	RelDate 		string `json:"reldate"`
 }
