@@ -8,35 +8,36 @@ import (
 	"stonesrv/log"
 	"stonesrv/models"
 	"stonesrv/database"
+	"stonesrv/conf"
 	"github.com/gin-gonic/gin"
 )
 
 //Update 应用版本更新
-type Update struct {
+type Updates struct {
 	Controllers
 }
 
 //GetGroup 空
-func (p *Update) GetGroup() string {
+func (p *Updates) GetGroup() string {
 	return "/auth"
 }
 
 //GetRelativePath 路径 update
-func (p *Update) GetRelativePath() string {
+func (p *Updates) GetRelativePath() string {
 	return "/update"
 }
 
 //GetMethod GET
-func (p *Update) GetMethod() string {
+func (p *Updates) GetMethod() string {
 	return "GET"
 }
 
 //GetFunc 更新方法实现
-func (p *Update) GetFunc() func(context *gin.Context) {
+func (p *Updates) GetFunc() func(context *gin.Context) {
 	return func(context *gin.Context) {
 		log.Info(fmt.Sprintf("login %+v", context))
 		// Parse JSON
-		updRequest := models.UpdateRequest{}
+		updRequest := models.UpdatesRequest{}
 		if context.ShouldBind(&updRequest) != nil {
 			context.JSON(http.StatusBadRequest, gin.H{"status": "获取更新失败，参数不正确"})
 			return
@@ -48,8 +49,15 @@ func (p *Update) GetFunc() func(context *gin.Context) {
 		}
 		upd := database.GetDatabase().GetUpdate()
 		serverVers := strings.Split(upd.Version, ".")
+		isForce   := upd.Force == 1
 		if len(serverVers) < 3{
 			context.JSON(http.StatusBadRequest, gin.H{"status": "没有最新版本"})
+			return
+		}
+		if isForce {
+			//这里强制更新
+			info := p.makeResponse(upd)
+			context.JSON(http.StatusOK, gin.H{"status": "紧急更新", "info": info})
 			return
 		}
 		if strings.Compare(upd.Version, updRequest.Version) == 0{
@@ -61,20 +69,27 @@ func (p *Update) GetFunc() func(context *gin.Context) {
 			return
 		}
 		if strings.Compare(serverVers[0], clientVers[0]) > 0 || strings.Compare(serverVers[1], clientVers[1]) > 0 || strings.Compare(serverVers[2], clientVers[2]) > 0{
-			//这里更新
-			rsp := models.UpdateResponse{
-				Version:upd.Version,
-				MD5:upd.MD5,
-				Info:upd.Info,
-				RelDate:upd.RelDate,
-			}
-			info,err := json.Marshal(rsp)
-			if err != nil{
-				info = []byte("{}")
-			}
-			context.JSON(http.StatusOK, gin.H{"status": "发现新版本", "info": string(info)})
+			//发现新版本更新
+			info := p.makeResponse(upd)
+			context.JSON(http.StatusOK, gin.H{"status": "发现新版本", "info": info})
 			return
 		}
 		context.JSON(http.StatusOK, gin.H{"status": "不需要更新"})
 	}
 }
+
+func (p *Updates) makeResponse(upd *models.Updates) string{
+	rsp := models.UpdatesResponse{
+		Version:upd.Version,
+		MD5:upd.MD5,
+		Info:upd.Info,
+		RelDate:upd.RelDate,
+		Path:fmt.Sprintf("https://127.0.0.1:8621%s/%s/%s", conf.GetUpdatesDir(),upd.Version, conf.GetUpdateFile()),
+	}
+	info,err := json.Marshal(rsp)
+	if err != nil{
+		info = []byte("{}")
+	}
+	return string(info)
+}
+

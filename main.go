@@ -20,7 +20,7 @@ func main() {
 		&controllers.Login{},
 		&controllers.Logout{},
 		&controllers.UserInfo{},
-		&controllers.Update{},
+		&controllers.Updates{},
 		&controllers.Admin{},
 	}
 	for _, v := range(ctrls){

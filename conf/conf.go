@@ -59,6 +59,16 @@ func GetSSLKeyFile() string{
 	return conf.config.SSLKeyFile
 }
 
+//GetUpdatesDir 获取更新路径
+func GetUpdatesDir() string{
+	return conf.config.UpdatesDir
+}
+
+//GetUpdateFile 获取更新文件名
+func GetUpdateFile() string{
+	return conf.config.UpdateFile
+}
+
 //initConfig 初始化配置文件
 func (p *Conf) initConfig() {
 	config, err := p.readConfig()

@@ -34,16 +34,17 @@ type UserInfoResponse struct {
 	ExpDate		string `json:"expdate" binding:"required"`		//到期日
 }
 
-//UpdateRequest 版本更新请求
-type UpdateRequest struct {
+//UpdatesRequest 版本更新请求
+type UpdatesRequest struct {
 	Version 	string `json:"version" binding:"required"`		//本地版本号
 	MD5	    	string `json:"md5" binding:"required"`			//本地文件MD5
 }
 
-//UpdateResponse 版本更新回报
-type UpdateResponse struct{
+//UpdatesResponse 版本更新回报
+type UpdatesResponse struct{
 	Version 		string `json:"version"`						//服务器版本号
 	MD5				string `json:"md5"`							//服务器文件MD5
 	Info    		string `json:"info"`						//更新内容
 	RelDate 		string `json:"reldate"`						//更新日期
+	Path			string `json:"path"`						//下载路径
 }

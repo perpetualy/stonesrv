@@ -1,6 +1,8 @@
 package routers
 
 import (
+	"path"
+	"net/http"
 	"stonesrv/middlewares"
 	"fmt"
 	"runtime/debug"
@@ -92,12 +94,22 @@ func (p *Routers) regControllers() {
 	})
 }
 
+func (p *Routers) setStaticFileSystem(){
+	//更新文件系统
+	relativePath := fmt.Sprintf("%s", conf.GetUpdatesDir())
+	dir := path.Base(relativePath)
+	p.routerEng.StaticFS(relativePath, http.Dir(dir))
+}
+
 func (p *Routers) run() {
 	//初始化 Eng
 	rou.routerEng = gin.Default()
 
 	//注册控制器
 	p.regControllers()
+
+	//设置文件系统
+	p.setStaticFileSystem()
 
 	//启动监控
 	p.routerEng.Run(fmt.Sprintf("%s:%s", conf.GetServerAddress(), conf.GetServerPort()))
@@ -109,6 +121,9 @@ func (p *Routers) runTLS() {
 
 	//注册控制器
 	p.regControllers()
+
+	//设置文件系统
+	p.setStaticFileSystem()
 
 	//启动监控
 	p.routerEng.RunTLS(fmt.Sprintf("%s:%s", conf.GetServerAddress(), conf.GetServerPort()), conf.GetSSLCrtFile(), conf.GetSSLKeyFile())

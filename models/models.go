@@ -7,6 +7,8 @@ type Config struct {
 	ServerPort    	string `ini:"ServerPort"`
 	SSLCrtFile    	string `ini:"SSLCrtFile"`
 	SSLKeyFile    	string `ini:"SSLKeyFile"`
+	UpdatesDir		string `ini:"UpdatesDir"`
+	UpdateFile		string `ini:"UpdateFile"`
 }
 
 //User 用户信息
@@ -42,7 +44,7 @@ type Disk0 struct {
 }
 
 //Update 版本更新
-type Update struct {
+type Updates struct {
 	Key     		string `json:"_key,omitempty"`
 	Version 		string `json:"version"`
 	MD5				string `json:"md5"`

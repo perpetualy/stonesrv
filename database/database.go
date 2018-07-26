@@ -21,7 +21,7 @@ type DataBase interface {
 	UpsertUser(models.User) error
 
 	//升级
-	GetUpdate() *models.Update
+	GetUpdate() *models.Updates
 }
 
 var db *DB

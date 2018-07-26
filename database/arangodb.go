@@ -209,14 +209,14 @@ func (p *ArangoDB) UpsertUser(user models.User) error {
 }
 
 //GetUpdate 获取软件更新
-func (p *ArangoDB) GetUpdate() *models.Update {
+func (p *ArangoDB) GetUpdate() *models.Updates {
 	cursor, err := p.queryUpdate()
 	if err != nil{
 		return nil
 	}
 	defer cursor.Close()
 	for cursor.HasMore() {
-		var update models.Update
+		var update models.Updates
 		_, err := cursor.ReadDocument(context.Background(), &update)
 		if err != nil {
 			log.Error(fmt.Sprintf("GetUpdate() error, detail%v\n", err))
