@@ -135,7 +135,7 @@ func (p *Login) GetFunc() func(context *gin.Context) {
 
 //login 登录方法实现
 func (p *Login) login(context *gin.Context) {
-	log.Info(fmt.Sprintf("login %+v", context))
+	//log.Info(fmt.Sprintf("login %+v", context))
 	// Parse JSON
 	loginRequest := models.LoginRequest{}
 	if context.Bind(&loginRequest) != nil {
