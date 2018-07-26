@@ -208,6 +208,27 @@ func (p *ArangoDB) UpsertUser(user models.User) error {
 	return err
 }
 
+//GetUpdate 获取软件更新
+func (p *ArangoDB) GetUpdate() *models.Update {
+	cursor, err := p.queryUpdate()
+	if err != nil{
+		return nil
+	}
+	defer cursor.Close()
+	for cursor.HasMore() {
+		var update models.Update
+		_, err := cursor.ReadDocument(context.Background(), &update)
+		if err != nil {
+			log.Error(fmt.Sprintf("GetUpdate() error, detail%v\n", err))
+			return nil
+		}
+		return &update
+	}
+	return nil
+}
+
+//以下是内部函数
+
 //initConnection 初始化连接
 func (p *ArangoDB) initConnection(address string) {
 	defer func() {
@@ -432,4 +453,13 @@ func (p *ArangoDB) upsert(bindVar map[string]interface{}) error {
 	}
 	log.Info(fmt.Sprintf("UPSERT %v Success %v Type %v.", bindVar["@collection"], bindVar["key"], ret.Type))
 	return nil
+}
+
+//查询排序过后的update
+func (p *ArangoDB) queryUpdate() (cursor godriver.Cursor, err error){
+	aql := `FOR upd in update
+			SORT upd.reldate
+			return upd`
+	cursor, err = p.Database.Query(context.Background(), aql, nil)
+	return
 }

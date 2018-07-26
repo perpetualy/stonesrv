@@ -40,3 +40,11 @@ type Disk0 struct {
 	Key     string `json:"_key,omitempty"`
 	UserKey string `json:"userkey"`
 }
+
+//Update 版本更新
+type Update struct {
+	Key     string `json:"_key,omitempty"`
+	Version string `json:"version"`
+	Info    string `json:"info"`
+	RelDate string `json:"reldate"`
+}

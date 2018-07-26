@@ -19,6 +19,9 @@ type DataBase interface {
 	GetUserByName(string) *models.User
 	InsertUser(models.User) error
 	UpsertUser(models.User) error
+
+	//升级
+	GetUpdate() *models.Update
 }
 
 var db *DB
