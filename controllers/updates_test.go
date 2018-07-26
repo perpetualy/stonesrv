@@ -11,7 +11,7 @@ import (
 func TestUpdatesGetGroup(t *testing.T) {
 	Convey("【测试】 UpdateGetGroup", t, func() {
 		conf.Init("../conf/stonesrv.cfg")
-		update := Update{}
+		update := Updates{}
 		group := update.GetGroup()
 		Convey("获取分组 ", func() {
 			So(group, ShouldEqual, "/auth")
@@ -23,7 +23,7 @@ func TestUpdatesGetGroup(t *testing.T) {
 func TestUpdatesGetRelativePath(t *testing.T) {
 	Convey("【测试】 UpdateGetRelativePath", t, func() {
 		conf.Init("../conf/stonesrv.cfg")
-		update := Update{}
+		update := Updates{}
 		relativePath := update.GetRelativePath()
 		Convey("获取相对路径 ", func() {
 			So(relativePath, ShouldEqual, "/update")
@@ -35,7 +35,7 @@ func TestUpdatesGetRelativePath(t *testing.T) {
 func TestUpdatesGetMethod(t *testing.T) {
 	Convey("【测试】 UpdateGetMethod", t, func() {
 		conf.Init("../conf/stonesrv.cfg")
-		update := Update{}
+		update := Updates{}
 		method := update.GetMethod()
 		Convey("获取方法名称 ", func() {
 			So(method, ShouldEqual, "GET")
