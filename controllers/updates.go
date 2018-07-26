@@ -13,7 +13,7 @@ import (
 	"github.com/gin-gonic/gin/json"
 )
 
-//Update 应用版本更新
+//Updates 应用版本更新
 type Updates struct {
 	Controllers
 }
