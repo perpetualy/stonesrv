@@ -4,6 +4,7 @@ import (
 	"time"
 	"crypto/md5"
 	"crypto/sha512"
+	"encoding/hex" 
 
 	"golang.org/x/crypto/bcrypt"
 	"github.com/dgrijalva/jwt-go"
@@ -61,7 +62,8 @@ func initCrypto() *Crypto {
 //MakeMd5 用MD5加密后的字符串	DICK0 和 MAC用MD5够了
 func (p *Crypto) makeMd5(rawstring string) string {
 	md := md5.New()
-	return string(md.Sum([]byte(rawstring)))
+	md.Write([]byte(rawstring))
+	return hex.EncodeToString(md.Sum(nil))
 }
 
 //MakeBcrypt 用Bcrypt加密后的字符串
@@ -76,13 +78,15 @@ func (p *Crypto) makeBcrypt(rawstring string) string {
 //MakeSHA512 用SHA512加密后的字符串
 func (p *Crypto) makeSHA512(rawstring string) string {
 	sh := sha512.New()
-	return string(sh.Sum([]byte(rawstring)))
+	sh.Write([]byte(rawstring))
+	return hex.EncodeToString(sh.Sum(nil))
 }
 
 //MakeSHA256 用SHA256加密后的字符串
 func (p *Crypto) makeSHA256(rawstring string) string {
 	sh := sha512.New512_256()
-	return string(sh.Sum([]byte(rawstring)))
+	sh.Write([]byte(rawstring))
+	return hex.EncodeToString(sh.Sum(nil))
 }
 
 //MakePasword 密码加密 MD5 + SHA384 + BCRYPT
@@ -90,7 +94,9 @@ func (p *Crypto) makeSHA256(rawstring string) string {
 func (p *Crypto) makePasword(password string) string {
 	md := md5.New()
 	sh := sha512.New() //只用到512
-	bcryptstr, err := bcrypt.GenerateFromPassword(sh.Sum(md.Sum([]byte(password))), bcrypt.DefaultCost)
+	md.Write([]byte(password))
+	sh.Write(md.Sum(nil))
+	bcryptstr, err := bcrypt.GenerateFromPassword(sh.Sum(nil), bcrypt.DefaultCost)
 	if err != nil {
 		return ""
 	}
