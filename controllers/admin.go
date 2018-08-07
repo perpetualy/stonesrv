@@ -50,6 +50,7 @@ type DeActivate struct {
 
 //GetGroup 分组 /
 func (p *DeActivate) GetGroup() string {
+	
 	return "/"
 }
 
