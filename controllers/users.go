@@ -1,16 +1,17 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin/json"
 	"fmt"
 	"net/http"
+	"stonesrv/crypto"
 	"stonesrv/database"
+	"stonesrv/env"
 	"stonesrv/log"
 	"stonesrv/models"
-	"stonesrv/crypto"
-	"stonesrv/env"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin/json"
 
 	"github.com/gin-gonic/gin"
 )
@@ -72,7 +73,7 @@ func (p *Register) register(context *gin.Context) {
 	}
 
 	//验证使用时长
-	if req.Duration < 0 || req.Duration > 512640 {
+	if req.Duration < 0 || req.Duration > 518400 {
 		context.JSON(203, gin.H{"status": "非法的使用时长"})
 		return
 	}
@@ -83,7 +84,7 @@ func (p *Register) register(context *gin.Context) {
 
 	user := req
 	user.Key = key
-	user.RegDate = now.Format(env.FullDateTimeFormat) //生成注册时间
+	user.RegDate = now.Format(env.FullDateTimeFormat)     //生成注册时间
 	user.ExpDate = expdate.Format(env.FullDateTimeFormat) //生成过期时间
 	user.Activated = 1
 
@@ -145,7 +146,7 @@ func (p *Login) login(context *gin.Context) {
 	key := fmt.Sprintf("%s%s%s", loginRequest.User, loginRequest.P1, loginRequest.P2)
 	usr := database.GetDatabase().GetUserByKey(key)
 	//查询用户是否存在
-	if usr == nil{
+	if usr == nil {
 		//用户不存在 返回
 		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登录失败，用户不存在"})
 		return
@@ -156,39 +157,39 @@ func (p *Login) login(context *gin.Context) {
 		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登录失败，密码不正确"})
 		return
 	}
-	if usr.Activated != 1{
+	if usr.Activated != 1 {
 		//用户已经过期
 		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登录失败，用户已经失效"})
-		return			
+		return
 	}
-	loc, lok  := time.LoadLocation("Local")
+	loc, lok := time.LoadLocation("Local")
 	regDate, pok := time.ParseInLocation(env.FullDateTimeFormat, usr.RegDate, loc)
 	expDate, eok := time.ParseInLocation(env.FullDateTimeFormat, usr.ExpDate, loc)
-	if lok!=nil || pok!=nil || eok != nil{
+	if lok != nil || pok != nil || eok != nil {
 		//获取用户时间出错
 		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登录失败，获取用户时间出错"})
 		return
 	}
 	locExpDate := regDate.Add(time.Minute * time.Duration(usr.Duration))
 	now := time.Now()
-	if now.After(locExpDate) || now.After(expDate){
+	if now.After(locExpDate) || now.After(expDate) {
 		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登录失败，用户已经过期"})
-		return	
+		return
 	}
 
 	deltaDuration := locExpDate.Sub(now)
 	duration := int64(deltaDuration.Minutes())
-	
+
 	//生成TOKEN
 	token := crypto.GenToken(duration, usr.Salt)
 
-	if strings.Compare(token, "") == 0{
+	if strings.Compare(token, "") == 0 {
 		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登录失败，生成TOKEN失败"})
 		return
 	}
 
 	//客户端需要维护token
-	context.JSON(http.StatusOK, gin.H{"status": "登录成功","token":token})
+	context.JSON(http.StatusOK, gin.H{"status": "登录成功", "token": token})
 }
 
 //Logout 登出控制器  暂时无用
@@ -211,7 +212,7 @@ func (p *Logout) GetMethod() string {
 	return "POST"
 }
 
-//GetFunc 注销方法实现 
+//GetFunc 注销方法实现
 func (p *Logout) GetFunc() func(context *gin.Context) {
 	return p.logout
 }
@@ -228,14 +229,14 @@ func (p *Logout) logout(context *gin.Context) {
 	key := fmt.Sprintf("%s%s%s", logoutRequest.User, logoutRequest.P1, logoutRequest.P2)
 	usr := database.GetDatabase().GetUserByKey(key)
 	//查询用户是否存在
-	if usr == nil{
+	if usr == nil {
 		//用户不存在 返回
 		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登出失败，用户不存在"})
 		return
 	}
-	//登出成功 
+	//登出成功
 	token := crypto.GenToken(0, usr.Salt)
-	if strings.Compare(token, "") == 0{
+	if strings.Compare(token, "") == 0 {
 		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登出失败"})
 		return
 	}
@@ -279,7 +280,7 @@ func (p *UserInfo) getInfo(context *gin.Context) {
 	key := fmt.Sprintf("%s%s%s", userInfoRequest.User, userInfoRequest.P1, userInfoRequest.P2)
 	usr := database.GetDatabase().GetUserByKey(key)
 	//查询用户是否存在
-	if usr == nil{
+	if usr == nil {
 		//用户不存在 返回
 		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "获取用户信息失败，用户不存在"})
 		return
@@ -287,19 +288,19 @@ func (p *UserInfo) getInfo(context *gin.Context) {
 
 	//创建回报
 	rsp := models.UserInfoResponse{
-		User:usr.User,
-		FullName:usr.FullName,
-		Company:usr.Company,
-		Address:usr.Address,
-		Email:usr.Email,
-		Phone:usr.Phone,
-		RegDate:usr.RegDate,
-		ExpDate:usr.ExpDate,
+		User:     usr.User,
+		FullName: usr.FullName,
+		Company:  usr.Company,
+		Address:  usr.Address,
+		Email:    usr.Email,
+		Phone:    usr.Phone,
+		RegDate:  usr.RegDate,
+		ExpDate:  usr.ExpDate,
 	}
 	info, err := json.Marshal(rsp)
-	if err != nil{
+	if err != nil {
 		info = []byte("{}")
 	}
 	//info := fmt.Sprintf("{\"用户名\":\"%s\",\"全名\":\"%s\",\"公司\":\"%s\",\"地址\":\"%s\",\"电话\":\"%s\",\"邮箱\":\"%s\",\"注册\":\"%s\",\"过期\":\"%s\"}", usr.User, usr.FullName, usr.Company, usr.Address, usr.Phone, usr.Email, usr.RegDate, usr.ExpDate)
-	context.JSON(http.StatusOK, gin.H{"status": "获取用户信息成功","info":string(info)})
+	context.JSON(http.StatusOK, gin.H{"status": "获取用户信息成功", "info": string(info)})
 }

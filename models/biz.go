@@ -1,50 +1,83 @@
 package models
 
+//StatusMsg 消息的内容
+type StatusMsg struct {
+	Status string `json:"status"` //消息具体内容
+	Token  string `json:"token"`  //Token 消息
+	Info   string `json:"info"`   //Info 消息
+	User   string `json:"User"`   //User 名字
+}
+
+//Response 所有消息的返回状态
+type Response struct {
+	Code int64     `json:"code"` //-1为异常，0为正常，1为错误消息
+	Msg  StatusMsg `json:"msg"`  //消息内容JSON
+}
+
 //LoginRequest 登录请求
 type LoginRequest struct {
-	User      	string `json:"user" binding:"required"`		//用户名
-	Password  	string `json:"password" binding:"required"` 	//MD5 + SHA1 + SALT
-	P1       	string `json:"p1" binding:"required"`			//MAC MD5
-	P2     		string `json:"p2" binding:"required"`			//Disk0 MD5
+	User     string `json:"user" binding:"required"`     //用户名
+	Password string `json:"password" binding:"required"` //MD5 + SHA1 + SALT
+	P1       string `json:"p1" binding:"required"`       //MAC MD5
+	P2       string `json:"p2" binding:"required"`       //Disk0 MD5
 }
 
 //LogoutRequest 登出请求
 type LogoutRequest struct {
-	User      	string `json:"user" binding:"required"`		//用户名
-	P1       	string `json:"p1" binding:"required"`			//MAC MD5
-	P2     		string `json:"p2" binding:"required"`			//Disk0 MD5
+	User string `json:"user" binding:"required"` //用户名
+	P1   string `json:"p1" binding:"required"`   //MAC MD5
+	P2   string `json:"p2" binding:"required"`   //Disk0 MD5
+}
+
+//RegisterRequest 注册请求
+type RegisterRequest struct {
+	User     string `json:"user" binding:"required"`
+	Password string `json:"password" binding:"required"`
+	Email    string `json:"email" binding:"required"`
+	Address  string `json:"address" binding:"required"`
+	FullName string `json:"fullname" binding:"required"`
+	Phone    string `json:"phone" binding:"required"`
+	Company  string `json:"company" binding:"required"`
+
+	Mac       string `json:"mac" binding:"required"`
+	Disk0     string `json:"disk0" binding:"required"`
+	Salt      int64  `json:"salt" binding:"required"` //暂时无用 强制设定为2
+	Duration  int64  `json:"duration" binding:"required"`
+	RegDate   string `json:"regdate"`
+	ExpDate   string `json:"expdate"`
+	Activated int64  `json:"activated"`
 }
 
 //UserInfoRequest 获取用户信息请求
 type UserInfoRequest struct {
-	User      	string `json:"user" binding:"required"`		//用户名
-	P1       	string `json:"p1" binding:"required"`			//MAC MD5
-	P2     		string `json:"p2" binding:"required"`			//Disk0 MD5
+	User string `json:"user" binding:"required"` //用户名
+	P1   string `json:"p1" binding:"required"`   //MAC MD5
+	P2   string `json:"p2" binding:"required"`   //Disk0 MD5
 }
 
 //UserInfoResponse 获取用户信息回报
 type UserInfoResponse struct {
-	User      	string `json:"user" binding:"required"`		//用户名
-	FullName    string `json:"fullname" binding:"required"`		//全名
-	Company     string `json:"company" binding:"required"`		//公司名
-	Address		string `json:"address" binding:"required"`		//地址
-	Phone		string `json:"phone" binding:"required"`		//电话
-	Email		string `json:"email" binding:"required"`		//邮箱
-	RegDate		string `json:"regdate" binding:"required"`		//注册日期
-	ExpDate		string `json:"expdate" binding:"required"`		//到期日
+	User     string `json:"user" binding:"required"`     //用户名
+	FullName string `json:"fullname" binding:"required"` //全名
+	Company  string `json:"company" binding:"required"`  //公司名
+	Address  string `json:"address" binding:"required"`  //地址
+	Phone    string `json:"phone" binding:"required"`    //电话
+	Email    string `json:"email" binding:"required"`    //邮箱
+	RegDate  string `json:"regdate" binding:"required"`  //注册日期
+	ExpDate  string `json:"expdate" binding:"required"`  //到期日
 }
 
 //UpdatesRequest 版本更新请求
 type UpdatesRequest struct {
-	Version 	string `json:"version" binding:"required"`		//本地版本号
-	MD5	    	string `json:"md5" binding:"required"`			//本地文件MD5
+	Version string `json:"version" binding:"required"` //本地版本号
+	MD5     string `json:"md5" binding:"required"`     //本地文件MD5
 }
 
 //UpdatesResponse 版本更新回报
-type UpdatesResponse struct{
-	Version 		string `json:"version"`						//服务器版本号
-	MD5				string `json:"md5"`							//服务器文件MD5
-	Info    		string `json:"info"`						//更新内容
-	RelDate 		string `json:"reldate"`						//更新日期
-	Path			string `json:"path"`						//下载路径
+type UpdatesResponse struct {
+	Version string `json:"version"` //服务器版本号
+	MD5     string `json:"md5"`     //服务器文件MD5
+	Info    string `json:"info"`    //更新内容
+	RelDate string `json:"reldate"` //更新日期
+	Path    string `json:"path"`    //下载路径
 }
