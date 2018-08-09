@@ -74,6 +74,11 @@ func GetLanguage() string {
 	return conf.config.Language
 }
 
+//IsDebugMode 判断是否DEBUG模式
+func IsDebugMode() bool {
+	return strings.Compare(conf.config.DebugMode, "1") == 0
+}
+
 //initConfig 初始化配置文件
 func (p *Conf) initConfig() {
 	config, err := p.readConfig()

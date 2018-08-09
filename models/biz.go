@@ -4,9 +4,6 @@ package models
 //StatusMsg 消息的内容
 type StatusMsg struct {
 	Status string `json:"status"` //消息具体内容
-	Token  string `json:"token"`  //Token 消息
-	Info   string `json:"info"`   //Info 消息
-	User   string `json:"User"`   //User 名字
 }
 
 //Response 所有消息的返回状态

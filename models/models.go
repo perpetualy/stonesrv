@@ -15,6 +15,7 @@ type Config struct {
 	UpdatesDir    string `ini:"UpdatesDir"`
 	UpdateFile    string `ini:"UpdateFile"`
 	Language      string `ini:"Language"`
+	DebugMode     string `ini:"DebugMode"`
 }
 
 //Word 多语言基本单词

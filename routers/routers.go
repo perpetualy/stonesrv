@@ -1,15 +1,15 @@
 package routers
 
 import (
-	"path"
-	"net/http"
-	"stonesrv/middlewares"
 	"fmt"
+	"net/http"
+	"path"
 	"runtime/debug"
 	"stonesrv/accounts"
 	"stonesrv/conf"
 	"stonesrv/controllers"
 	"stonesrv/log"
+	"stonesrv/middlewares"
 	"sync"
 
 	"github.com/gin-gonic/gin"
@@ -64,7 +64,7 @@ func (p *Routers) regControllers() {
 		//}))
 		var irouter gin.IRouter
 
-		switch group{
+		switch group {
 		case "/":
 			irouter = p.routerEng.Group(group, gin.BasicAuth(accounts.GetAccounts()))
 		case "/auth":
@@ -94,7 +94,7 @@ func (p *Routers) regControllers() {
 	})
 }
 
-func (p *Routers) setStaticFileSystem(){
+func (p *Routers) setStaticFileSystem() {
 	//更新文件系统
 	relativePath := fmt.Sprintf("%s", conf.GetUpdatesDir())
 	dir := path.Base(relativePath)

@@ -2,7 +2,7 @@
 <Words>
     <Word>
         <Code>401</Code>
-        <Text>该接口未授权</Text>
+        <Text>该用户未授权</Text>
     </Word>
 
     <Word>

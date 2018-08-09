@@ -7,6 +7,8 @@ import (
 	"stonesrv/language"
 	"stonesrv/log"
 	"stonesrv/routers"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -29,5 +31,10 @@ func main() {
 		routers.AddController(v)
 	}
 
-	routers.RunTLS()
+	if conf.IsDebugMode() {
+		routers.Run()
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+		routers.RunTLS()
+	}
 }
