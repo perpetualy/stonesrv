@@ -4,6 +4,7 @@ import (
 	"stonesrv/conf"
 	"stonesrv/controllers"
 	"stonesrv/database"
+	"stonesrv/language"
 	"stonesrv/log"
 	"stonesrv/routers"
 )
@@ -13,6 +14,7 @@ func main() {
 	//读取配置文件
 
 	conf.Init("")
+	language.Init()
 	database.Init()
 
 	ctrls := []controllers.Controllers{
@@ -23,7 +25,7 @@ func main() {
 		&controllers.Updates{},
 		&controllers.Admin{},
 	}
-	for _, v := range(ctrls){
+	for _, v := range ctrls {
 		routers.AddController(v)
 	}
 

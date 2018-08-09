@@ -1,3 +1,4 @@
+//Package models biz.go 业务请求对象   [Author:FlynnYal CreateTime:2018-08]
 package models
 
 //StatusMsg 消息的内容

@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"fmt"
-	"net/http"
 	"stonesrv/crypto"
 	"stonesrv/database"
 	"stonesrv/env"
@@ -46,7 +45,8 @@ func (p *Register) register(context *gin.Context) {
 	err := context.Bind(&req)
 	if err != nil {
 		log.Error(fmt.Sprintf("Register JSON error %+v", err))
-		context.JSON(400, gin.H{"status": "注册失败，参数错误"})
+		env.GenJSONResponse(context, env.RegFailedParamsErrors)
+		//context.JSON(env.RegFailedParamsErrors, gin.H{"status": language.GetText(env.RegFailedParamsErrors)})
 		return
 	}
 
@@ -54,27 +54,31 @@ func (p *Register) register(context *gin.Context) {
 	//查找Key是否存在
 	//如果已经存在，直接返回
 	if database.GetDatabase().IsUserExist(key) {
-		context.JSON(203, gin.H{"status": fmt.Sprintf("用户 [%s] 已经被注册 ", req.User)})
+		env.GenJSONResponse(context, env.RegFailedUserAlreadyRegistered, req.User)
+		//context.JSON(env.RegFailedUserAlreadyRegistered, gin.H{"status": fmt.Sprintf(language.GetText(env.RegFailedUserAlreadyRegistered), req.User)})
 		return
 	}
 
 	//验证MAC是否存在
 	if database.GetDatabase().IsMACExist(req.Mac) {
 		//MAC存在返回
-		context.JSON(203, gin.H{"status": "这台机器已经被注册，请联系管理员"})
+		env.GenJSONResponse(context, env.RegFailedPCAlreadyRegistered)
+		//context.JSON(env.RegFailedPCAlreadyRegistered, gin.H{"status": language.GetText(env.RegFailedPCAlreadyRegistered)})
 		return
 	}
 
 	//验证DISK0是否存在
 	if database.GetDatabase().IsDisk0Exist(req.Disk0) {
 		//Disk0存在返回
-		context.JSON(203, gin.H{"status": "这台机器已经被注册，请联系管理员"})
+		env.GenJSONResponse(context, env.RegFailedPCAlreadyRegistered)
+		//context.JSON(env.RegFailedPCAlreadyRegistered, gin.H{"status": language.GetText(env.RegFailedPCAlreadyRegistered)})
 		return
 	}
 
 	//验证使用时长
 	if req.Duration < 0 || req.Duration > 518400 {
-		context.JSON(203, gin.H{"status": "非法的使用时长"})
+		env.GenJSONResponse(context, env.RegFailedInvalidDuration)
+		//context.JSON(env.RegFailedInvalidDuration, gin.H{"status": language.GetText(env.RegFailedInvalidDuration)})
 		return
 	}
 
@@ -90,23 +94,26 @@ func (p *Register) register(context *gin.Context) {
 
 	err = database.GetDatabase().InsertMAC(models.MAC{Key: user.Mac, UserKey: user.Key})
 	if err != nil {
-		context.JSON(203, gin.H{"status": fmt.Sprintf("用户 [%s=] 注册失败", req.User)})
+		env.GenJSONResponse(context, env.RegFailed, req.User)
+		//context.JSON(env.RegFailed, gin.H{"status": fmt.Sprintf(language.GetText(env.RegFailed), req.User)})
 		return
 	}
 
 	err = database.GetDatabase().InsertDisk0(models.Disk0{Key: user.Disk0, UserKey: user.Key})
 	if err != nil {
-		context.JSON(203, gin.H{"status": fmt.Sprintf("用户 [%s=] 注册失败", req.User)})
+		env.GenJSONResponse(context, env.RegFailed, req.User)
+		//context.JSON(env.RegFailed, gin.H{"status": fmt.Sprintf(language.GetText(env.RegFailed), req.User)})
 		return
 	}
 
 	err = database.GetDatabase().InsertUser(user)
 	if err != nil {
-		context.JSON(203, gin.H{"status": fmt.Sprintf("用户 [%s=] 注册失败", req.User)})
+		env.GenJSONResponse(context, env.RegFailed, req.User)
+		//context.JSON(env.RegFailed, gin.H{"status": fmt.Sprintf(language.GetText(env.RegFailed), req.User)})
 		return
 	}
-
-	context.JSON(200, gin.H{"status": "注册成功", "User": user.User})
+	env.GenJSONResponse(context, env.RegSuccess)
+	//context.JSON(env.RegSuccess, gin.H{"status": language.GetText(env.RegSuccess)})
 }
 
 //Login 登录控制器
@@ -140,7 +147,8 @@ func (p *Login) login(context *gin.Context) {
 	// Parse JSON
 	loginRequest := models.LoginRequest{}
 	if context.Bind(&loginRequest) != nil {
-		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登录失败，参数不正确"})
+		env.GenJSONResponse(context, env.LoginFailedParamsErrors)
+		//context.JSON(env.LoginFailedParamsErrors, gin.H{"status": language.GetText(env.LoginFailedParamsErrors)})
 		return
 	}
 	key := fmt.Sprintf("%s%s%s", loginRequest.User, loginRequest.P1, loginRequest.P2)
@@ -148,18 +156,21 @@ func (p *Login) login(context *gin.Context) {
 	//查询用户是否存在
 	if usr == nil {
 		//用户不存在 返回
-		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登录失败，用户不存在"})
+		env.GenJSONResponse(context, env.LoginFailedUserDoNotExists)
+		//context.JSON(env.LoginFailedUserDoNotExists, gin.H{"status": language.GetText(env.LoginFailedUserDoNotExists)})
 		return
 	}
 	//检验密码
 	if strings.Compare(loginRequest.Password, usr.Password) != 0 {
 		//密码不正确
-		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登录失败，密码不正确"})
+		env.GenJSONResponse(context, env.LoginFailedPasswordIncorrect)
+		//context.JSON(env.LoginFailedPasswordIncorrect, gin.H{"status": language.GetText(env.LoginFailedPasswordIncorrect)})
 		return
 	}
 	if usr.Activated != 1 {
-		//用户已经过期
-		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登录失败，用户已经失效"})
+		//用户已经失效
+		env.GenJSONResponse(context, env.LoginFailedUserInactivated)
+		//context.JSON(env.LoginFailedUserInactivated, gin.H{"status": language.GetText(env.LoginFailedUserInactivated)})
 		return
 	}
 	loc, lok := time.LoadLocation("Local")
@@ -167,13 +178,16 @@ func (p *Login) login(context *gin.Context) {
 	expDate, eok := time.ParseInLocation(env.FullDateTimeFormat, usr.ExpDate, loc)
 	if lok != nil || pok != nil || eok != nil {
 		//获取用户时间出错
-		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登录失败，获取用户时间出错"})
+		env.GenJSONResponse(context, env.LoginFailedGetDateFailed)
+		//context.JSON(env.LoginFailedGetDateFailed, gin.H{"status": language.GetText(env.LoginFailedGetDateFailed)})
 		return
 	}
 	locExpDate := regDate.Add(time.Minute * time.Duration(usr.Duration))
 	now := time.Now()
 	if now.After(locExpDate) || now.After(expDate) {
-		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登录失败，用户已经过期"})
+		//用户已经过期
+		env.GenJSONResponse(context, env.LoginFailedUserExpired)
+		//context.JSON(env.LoginFailedUserExpired, gin.H{"status": language.GetText(env.LoginFailedUserExpired)})
 		return
 	}
 
@@ -184,12 +198,14 @@ func (p *Login) login(context *gin.Context) {
 	token := crypto.GenToken(duration, usr.Salt)
 
 	if strings.Compare(token, "") == 0 {
-		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登录失败，生成TOKEN失败"})
+		env.GenJSONResponse(context, env.LoginFailedGenTokenFailed)
+		//context.JSON(env.LoginFailedGenTokenFailed, gin.H{"status": language.GetText(env.LoginFailedGenTokenFailed)})
 		return
 	}
 
 	//客户端需要维护token
-	context.JSON(http.StatusOK, gin.H{"status": "登录成功", "token": token})
+	env.GenJSONResponseWithMsg(context, env.LoginSuccess, token)
+	//context.JSON(env.LoginSuccess, gin.H{"status": token})
 }
 
 //Logout 登出控制器  暂时无用
@@ -223,7 +239,8 @@ func (p *Logout) logout(context *gin.Context) {
 	// Parse JSON
 	logoutRequest := models.LogoutRequest{}
 	if context.Bind(&logoutRequest) != nil {
-		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登出失败，参数不正确"})
+		env.GenJSONResponse(context, env.LogoutFailedParamsErrors)
+		//context.JSON(env.LogoutFailedParamsErrors, gin.H{"status": "登出失败，参数不正确"})
 		return
 	}
 	key := fmt.Sprintf("%s%s%s", logoutRequest.User, logoutRequest.P1, logoutRequest.P2)
@@ -231,16 +248,19 @@ func (p *Logout) logout(context *gin.Context) {
 	//查询用户是否存在
 	if usr == nil {
 		//用户不存在 返回
-		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登出失败，用户不存在"})
+		env.GenJSONResponse(context, env.LogoutFailedUserDoNotExists)
+		//context.JSON(env.LogoutFailedUserDoNotExists, gin.H{"status": "登出失败，用户不存在"})
 		return
 	}
 	//登出成功
 	token := crypto.GenToken(0, usr.Salt)
 	if strings.Compare(token, "") == 0 {
-		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "登出失败"})
+		env.GenJSONResponse(context, env.LogoutFailed)
+		//context.JSON(env.LogoutFailed, gin.H{"status": "登出失败"})
 		return
 	}
-	context.JSON(http.StatusOK, gin.H{"status": "登出成功?"})
+	env.GenJSONResponse(context, env.LogoutSuccess)
+	//context.JSON(env.LogoutSuccess, gin.H{"status": "登出成功?"})
 }
 
 //UserInfo 用户信息控制器
@@ -274,7 +294,8 @@ func (p *UserInfo) getInfo(context *gin.Context) {
 	// Parse JSON
 	userInfoRequest := models.UserInfoRequest{}
 	if context.Bind(&userInfoRequest) != nil {
-		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "获取用户信息失败，参数不正确"})
+		env.GenJSONResponse(context, env.GetUserInfoFailedParamsErrors)
+		//context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "获取用户信息失败，参数不正确"})
 		return
 	}
 	key := fmt.Sprintf("%s%s%s", userInfoRequest.User, userInfoRequest.P1, userInfoRequest.P2)
@@ -282,7 +303,8 @@ func (p *UserInfo) getInfo(context *gin.Context) {
 	//查询用户是否存在
 	if usr == nil {
 		//用户不存在 返回
-		context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "获取用户信息失败，用户不存在"})
+		env.GenJSONResponse(context, env.GetUserInfoFailedUserDoNotExists)
+		//context.JSON(http.StatusNonAuthoritativeInfo, gin.H{"status": "获取用户信息失败，用户不存在"})
 		return
 	}
 
@@ -300,7 +322,10 @@ func (p *UserInfo) getInfo(context *gin.Context) {
 	info, err := json.Marshal(rsp)
 	if err != nil {
 		info = []byte("{}")
+		env.GenJSONResponse(context, env.GetUserInfoFailed)
+		return
 	}
+	env.GenJSONResponseWithMsg(context, env.GetUserInfoSuccess, string(info))
 	//info := fmt.Sprintf("{\"用户名\":\"%s\",\"全名\":\"%s\",\"公司\":\"%s\",\"地址\":\"%s\",\"电话\":\"%s\",\"邮箱\":\"%s\",\"注册\":\"%s\",\"过期\":\"%s\"}", usr.User, usr.FullName, usr.Company, usr.Address, usr.Phone, usr.Email, usr.RegDate, usr.ExpDate)
-	context.JSON(http.StatusOK, gin.H{"status": "获取用户信息成功", "info": string(info)})
+	//context.JSON(http.StatusOK, gin.H{"status": "获取用户信息成功", "info": string(info)})
 }

@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"fmt"
-	"net/http"
 	"stonesrv/conf"
 	"stonesrv/database"
+	"stonesrv/env"
 	"stonesrv/log"
 	"stonesrv/models"
 	"strings"
@@ -40,46 +40,55 @@ func (p *Updates) GetFunc() func(context *gin.Context) {
 		// Parse JSON
 		updRequest := models.UpdatesRequest{}
 		if context.ShouldBind(&updRequest) != nil {
-			context.JSON(http.StatusBadRequest, gin.H{"status": "获取更新失败，参数不正确"})
+			env.GenJSONResponse(context, env.GetUpdatesFailedParamsError)
+			//context.JSON(http.StatusBadRequest, gin.H{"status": "获取更新失败，参数不正确"})
 			return
 		}
 		clientVers := strings.Split(updRequest.Version, ".")
 		if len(clientVers) < 3 {
-			context.JSON(http.StatusBadRequest, gin.H{"status": "获取更新失败，版本校验出错"})
+			env.GenJSONResponse(context, env.GetUpdatesFailedCheckingFailed)
+			//context.JSON(http.StatusBadRequest, gin.H{"status": "获取更新失败，版本校验出错"})
 			return
 		}
 		upd := database.GetDatabase().GetUpdate()
 		if upd == nil {
-			context.JSON(http.StatusBadRequest, gin.H{"status": "没有可用更新"})
+			env.GenJSONResponse(context, env.GetUpdatesFailedRemoteFailed)
+			//context.JSON(http.StatusBadRequest, gin.H{"status": "获取更新失败，远程版本出错"})
 			return
 		}
 		serverVers := strings.Split(upd.Version, ".")
 		isForce := upd.Force == 1
 		if len(serverVers) < 3 {
-			context.JSON(http.StatusBadRequest, gin.H{"status": "没有最新版本"})
+			env.GenJSONResponse(context, env.GetUpdatesFailedRemoteFailed)
+			//context.JSON(http.StatusBadRequest, gin.H{"status": "获取更新失败，远程版本出错"})
 			return
 		}
 		if isForce {
 			//这里强制更新
 			info := p.makeResponse(upd)
-			context.JSON(http.StatusOK, gin.H{"status": "紧急更新", "info": info})
+			env.GenJSONResponseWithMsg(context, env.GetUpdatesEmergent, info)
+			//context.JSON(http.StatusOK, gin.H{"status": info})
 			return
 		}
 		if strings.Compare(upd.Version, updRequest.Version) == 0 {
-			context.JSON(http.StatusOK, gin.H{"status": "已经是最新版本"})
+			env.GenJSONResponse(context, env.GetUpdatesNoNeed)
+			//context.JSON(http.StatusOK, gin.H{"status": "不需要更新"})
 			return
 		}
 		if strings.Compare(upd.MD5, updRequest.MD5) == 0 {
-			context.JSON(http.StatusOK, gin.H{"status": "本地更新已经存在"})
+			env.GenJSONResponse(context, env.GetUpdatesLocalUpdateAlready)
+			//context.JSON(http.StatusOK, gin.H{"status": "本地更新已经存在"})
 			return
 		}
 		if strings.Compare(serverVers[0], clientVers[0]) > 0 || strings.Compare(serverVers[1], clientVers[1]) > 0 || strings.Compare(serverVers[2], clientVers[2]) > 0 {
 			//发现新版本更新
 			info := p.makeResponse(upd)
-			context.JSON(http.StatusOK, gin.H{"status": "发现新版本", "info": info})
+			env.GenJSONResponseWithMsg(context, env.GetUpdatesUpdateFound, info)
+			//context.JSON(http.StatusOK, gin.H{"status": "发现新版本", "info": info})
 			return
 		}
-		context.JSON(http.StatusOK, gin.H{"status": "不需要更新"})
+		env.GenJSONResponse(context, env.GetUpdatesNoNeed)
+		//context.JSON(http.StatusOK, gin.H{"status": "不需要更新"})
 	}
 }
 

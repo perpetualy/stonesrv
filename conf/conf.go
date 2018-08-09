@@ -50,23 +50,28 @@ func GetServerPort() string {
 }
 
 //GetSSLCrtFile 获取SSL CRT证书
-func GetSSLCrtFile() string{
+func GetSSLCrtFile() string {
 	return conf.config.SSLCrtFile
 }
 
 //GetSSLKeyFile 获取SSL KEY
-func GetSSLKeyFile() string{
+func GetSSLKeyFile() string {
 	return conf.config.SSLKeyFile
 }
 
 //GetUpdatesDir 获取更新路径
-func GetUpdatesDir() string{
+func GetUpdatesDir() string {
 	return conf.config.UpdatesDir
 }
 
 //GetUpdateFile 获取更新文件名
-func GetUpdateFile() string{
+func GetUpdateFile() string {
 	return conf.config.UpdateFile
+}
+
+//GetLanguage 获取语言
+func GetLanguage() string {
+	return conf.config.Language
 }
 
 //initConfig 初始化配置文件
