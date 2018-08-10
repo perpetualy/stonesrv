@@ -21,11 +21,11 @@ func AuthToken() gin.HandlerFunc {
 			if token.Valid {
 				context.Next()
 			} else {
-				env.GenJSONResponse(context, env.AuthFailed)
+				env.GenJSONResponse(context, env.AuthFailed, nil)
 				//context.String(http.StatusUnauthorized, "非法的 Token")
 			}
 		} else {
-			env.GenJSONResponse(context, env.AuthFailed)
+			env.GenJSONResponse(context, env.AuthFailed, nil)
 			//context.String(http.StatusUnauthorized, "该接口未授权")
 		}
 		context.Abort()

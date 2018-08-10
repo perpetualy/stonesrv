@@ -56,6 +56,16 @@ func (p *ArangoDB) InsertMAC(mac models.MAC) error {
 	return err
 }
 
+//RemoveMAC 删除MAC
+func (p *ArangoDB) RemoveMAC(mac models.MAC) error {
+	bindVar := map[string]interface{}{
+		"doc":         mac,
+		"@collection": env.CollectionMAC,
+	}
+	err := p.remove(bindVar)
+	return err
+}
+
 //InsertDisk0 插入Disk0
 func (p *ArangoDB) InsertDisk0(disk0 models.Disk0) error {
 	bindVar := map[string]interface{}{
@@ -63,6 +73,16 @@ func (p *ArangoDB) InsertDisk0(disk0 models.Disk0) error {
 		"@collection": env.CollectionDisk0,
 	}
 	err := p.insert(bindVar)
+	return err
+}
+
+//RemoveDisk0 删除Disk0
+func (p *ArangoDB) RemoveDisk0(disk0 models.Disk0) error {
+	bindVar := map[string]interface{}{
+		"doc":         disk0,
+		"@collection": env.CollectionDisk0,
+	}
+	err := p.remove(bindVar)
 	return err
 }
 
@@ -197,6 +217,16 @@ func (p *ArangoDB) InsertUser(user models.User) error {
 	return err
 }
 
+//RemoveUser 删除用户 带KEY
+func (p *ArangoDB) RemoveUser(user models.User) error {
+	bindVar := map[string]interface{}{
+		"doc":         user,
+		"@collection": env.CollectionUser,
+	}
+	err := p.remove(bindVar)
+	return err
+}
+
 //UpsertUser 更新或者插入用户
 func (p *ArangoDB) UpsertUser(user models.User) error {
 	bindVar := map[string]interface{}{
@@ -208,10 +238,33 @@ func (p *ArangoDB) UpsertUser(user models.User) error {
 	return err
 }
 
+//ActiveUser 启用用户
+func (p *ArangoDB) ActiveUser(user models.User) error {
+	user.Activated = 1
+	return p.UpdateUserInfo(user)
+}
+
+//DeactiveUser 关闭用户
+func (p *ArangoDB) DeactiveUser(user models.User) error {
+	user.Activated = 0
+	return p.UpdateUserInfo(user)
+}
+
+//UpdateUserInfo 更新用户信息
+func (p *ArangoDB) UpdateUserInfo(user models.User) error {
+	bindVar := map[string]interface{}{
+		"doc":         user,
+		"key":         user.Key,
+		"@collection": env.CollectionUser,
+	}
+	err := p.update(bindVar)
+	return err
+}
+
 //GetUpdate 获取软件更新
 func (p *ArangoDB) GetUpdate() *models.Updates {
 	cursor, err := p.queryUpdate()
-	if err != nil{
+	if err != nil {
 		return nil
 	}
 	defer cursor.Close()
@@ -225,6 +278,27 @@ func (p *ArangoDB) GetUpdate() *models.Updates {
 		return &update
 	}
 	return nil
+}
+
+//SetUpdate 设置更新
+func (p *ArangoDB) SetUpdate(update models.Updates) error {
+	bindVar := map[string]interface{}{
+		"key":         update.Key,
+		"doc":         update,
+		"@collection": env.CollectionUpdates,
+	}
+	err := p.upsert(bindVar)
+	return err
+}
+
+//RemoveUpdate 删除某一更新
+func (p *ArangoDB) RemoveUpdate(update models.Updates) error {
+	bindVar := map[string]interface{}{
+		"doc":         update,
+		"@collection": env.CollectionUpdates,
+	}
+	err := p.remove(bindVar)
+	return err
 }
 
 //以下是内部函数
@@ -428,6 +502,50 @@ func (p *ArangoDB) insert(bindVar map[string]interface{}) error {
 	return nil
 }
 
+//remove 通用删除
+func (p *ArangoDB) remove(bindVar map[string]interface{}) error {
+	aql := `
+		REMOVE @doc IN @@collection
+		RETURN OLD._key
+	`
+	cursor, err := p.Database.Query(context.Background(), aql, bindVar)
+	if err != nil {
+		log.Info(fmt.Sprintf("REMOVE %v failed %v .", bindVar["@collection"], err))
+		return err
+	}
+	defer cursor.Close()
+	var ret string
+	_, err = cursor.ReadDocument(context.Background(), &ret)
+	if err != nil {
+		log.Info(fmt.Sprintf("REMOVE %v failed %v .", bindVar["@collection"], err))
+		return err
+	}
+	log.Info(fmt.Sprintf("REMOVE %v Success %v.", bindVar["@collection"], ret))
+	return nil
+}
+
+//update 通用更新
+func (p *ArangoDB) update(bindVar map[string]interface{}) error {
+	aql := `
+			UPDATE @key WITH @doc IN @@collection
+			RETURN NEW._key
+	`
+	cursor, err := p.Database.Query(context.Background(), aql, bindVar)
+	if err != nil {
+		log.Info(fmt.Sprintf("UPDATE %v failed %v .", bindVar["@collection"], err))
+		return err
+	}
+	defer cursor.Close()
+	var ret string
+	_, err = cursor.ReadDocument(context.Background(), &ret)
+	if err != nil {
+		log.Info(fmt.Sprintf("UPDATE %v failed %v .", bindVar["@collection"], err))
+		return err
+	}
+	log.Info(fmt.Sprintf("UPDATE %v Success %v.", bindVar["@collection"], ret))
+	return nil
+}
+
 //upsert 通用插入与更新
 func (p *ArangoDB) upsert(bindVar map[string]interface{}) error {
 	aql := `
@@ -456,7 +574,7 @@ func (p *ArangoDB) upsert(bindVar map[string]interface{}) error {
 }
 
 //查询排序过后的update
-func (p *ArangoDB) queryUpdate() (cursor godriver.Cursor, err error){
+func (p *ArangoDB) queryUpdate() (cursor godriver.Cursor, err error) {
 	aql := `FOR upd in updates
 			SORT upd.reldate
 			return upd`

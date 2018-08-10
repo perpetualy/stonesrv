@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Words>
     <Word>
+        <Code>400</Code>
+        <Text>请求参数有误</Text>
+    </Word>
+    <Word>
         <Code>401</Code>
         <Text>该用户未授权</Text>
+    </Word>
+	<Word>
+        <Code>404</Code>
+        <Text>您好！很高兴见到您！</Text>
     </Word>
 
     <Word>
         <Code>600</Code>
-        <Text>用户 %s 注册成功</Text>
+        <Text>用户 %v 注册成功</Text>
     </Word>
     <Word>
         <Code>601</Code>
@@ -15,7 +23,7 @@
     </Word>
     <Word>
         <Code>602</Code>
-        <Text>用户 %s 已经被注册</Text>
+        <Text>用户 %v 已经被注册</Text>
     </Word>
     <Word>
         <Code>603</Code>
@@ -27,7 +35,7 @@
     </Word>
     <Word>
         <Code>605</Code>
-        <Text>用户 %s 注册失败</Text>
+        <Text>用户 %v 注册失败</Text>
     </Word>
 
     <Word>

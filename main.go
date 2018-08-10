@@ -16,7 +16,7 @@ func main() {
 	//读取配置文件
 
 	conf.Init("")
-	language.Init()
+	language.Init("./language")
 	database.Init()
 
 	ctrls := []controllers.Controllers{

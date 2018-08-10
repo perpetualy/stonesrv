@@ -7,6 +7,7 @@ import (
 	"stonesrv/conf"
 	"stonesrv/log"
 	"stonesrv/models"
+	"strings"
 	"sync"
 )
 
@@ -17,18 +18,20 @@ type lang struct {
 	words   models.Words
 }
 
-//初始化语言
-func Init() {
-	path := fmt.Sprintf("language/%s/lang.xml", conf.GetLanguage())
-
-	buf, err := ioutil.ReadFile(path)
+//Init 初始化语言
+func Init(path string) {
+	languatepath := fmt.Sprintf("./language/%s/lang.xml", conf.GetLanguage())
+	if strings.Compare(path, "") != 0 {
+		languatepath = fmt.Sprintf("%s/%s/lang.xml", path, conf.GetLanguage())
+	}
+	buf, err := ioutil.ReadFile(languatepath)
 	if err != nil {
-		log.Fatal("Load languages failed!")
+		log.Panic("Load languages failed!")
 		return
 	}
 	err = xml.Unmarshal(buf, &l.words)
 	if err != nil {
-		log.Fatal("Load languages failed!")
+		log.Panic("Load languages failed!")
 		return
 	}
 	for _, w := range l.words.Word {
@@ -41,5 +44,5 @@ func GetText(code int) string {
 	if itext, ok := l.langMap.Load(code); ok {
 		return itext.(string)
 	}
-	return "N/A"
+	return "NONE"
 }
