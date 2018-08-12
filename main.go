@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	log.Init("stone.log", true)
+	log.Init("stone.log", true, true)
 	//读取配置文件
 
 	conf.Init("")
