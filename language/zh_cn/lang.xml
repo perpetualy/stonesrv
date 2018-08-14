@@ -133,4 +133,8 @@
         <Code>646</Code>
         <Text>本地更新已经存在</Text>
     </Word> 
+	    <Word>
+        <Code>650</Code>
+        <Text>获取全部分类成功</Text>
+    </Word> 
 </Words>

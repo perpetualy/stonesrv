@@ -21,7 +21,7 @@ type DataBase interface {
 	GetUserByName(string) *models.User
 	InsertUser(models.User) error
 	RemoveUser(models.User) error
-	UpsertUser(models.User) error
+	//UpsertUser(models.User) error
 	ActiveUser(models.User) error
 	DeactiveUser(models.User) error
 	UpdateUserInfo(models.User) error

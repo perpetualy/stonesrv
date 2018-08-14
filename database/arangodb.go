@@ -227,7 +227,7 @@ func (p *ArangoDB) RemoveUser(user models.User) error {
 	return err
 }
 
-//UpsertUser 更新或者插入用户
+/* //UpsertUser 更新或者插入用户
 func (p *ArangoDB) UpsertUser(user models.User) error {
 	bindVar := map[string]interface{}{
 		"doc":         user,
@@ -236,7 +236,7 @@ func (p *ArangoDB) UpsertUser(user models.User) error {
 	}
 	err := p.upsert(bindVar)
 	return err
-}
+} */
 
 //ActiveUser 启用用户
 func (p *ArangoDB) ActiveUser(user models.User) error {

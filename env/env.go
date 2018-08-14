@@ -44,4 +44,6 @@ var (
 	GetUpdatesFailedCheckingFailed = 644
 	GetUpdatesFailedRemoteFailed   = 645
 	GetUpdatesLocalUpdateAlready   = 646
+
+	GetClassifiesSuccess = 650
 )

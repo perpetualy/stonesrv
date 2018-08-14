@@ -8,7 +8,7 @@ type StatusMsg struct {
 
 //Response 所有消息的返回状态
 type Response struct {
-	Code int64     `json:"code"` //-1为异常，0为正常，1为错误消息
+	Code int       `json:"code"` //现在改为同SRV的RESPONSE CODE保持一致
 	Msg  StatusMsg `json:"msg"`  //消息内容JSON
 }
 
