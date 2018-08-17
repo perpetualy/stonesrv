@@ -137,4 +137,28 @@
         <Code>650</Code>
         <Text>获取全部分类成功</Text>
     </Word> 
+	<Word>
+        <Code>660</Code>
+        <Text>添加表成功</Text>
+    </Word> 	
+	<Word>
+        <Code>661</Code>
+        <Text>添加表失败，表已经存在</Text>
+    </Word> 	
+	<Word>
+        <Code>670</Code>
+        <Text>更新表成功</Text>
+    </Word> 	
+	<Word>
+        <Code>680</Code>
+        <Text>获取推荐索引成功</Text>
+    </Word> 
+	<Word>
+        <Code>681</Code>
+        <Text>获取推荐索引失败，非法的导入数据</Text>
+    </Word>	
+	<Word>
+        <Code>682</Code>
+        <Text>获取推荐索引失败，没有找到合适列</Text>
+    </Word>		
 </Words>

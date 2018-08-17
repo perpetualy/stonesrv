@@ -46,4 +46,13 @@ var (
 	GetUpdatesLocalUpdateAlready   = 646
 
 	GetClassifiesSuccess = 650
+
+	AddTableSuccess             = 660
+	AddTableFailedAlreadyExists = 661
+
+	UpdateTableSuccess = 670
+
+	GetIndexsRecommendsSuccess           = 680
+	GetIndexsRecommendsFailedDataInvalid = 681
+	GetIndexsRecommendsFailedNotFound    = 682
 )
