@@ -50,9 +50,12 @@ var (
 	AddTableSuccess             = 660
 	AddTableFailedAlreadyExists = 661
 
-	UpdateTableSuccess = 670
+	UpdateTableSuccess           = 670
+	UpdateTableFailedDoNotExists = 671
 
 	GetIndexsRecommendsSuccess           = 680
 	GetIndexsRecommendsFailedDataInvalid = 681
 	GetIndexsRecommendsFailedNotFound    = 682
+
+	InsertTableSuccess = 690
 )

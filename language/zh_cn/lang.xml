@@ -150,6 +150,10 @@
         <Text>更新表成功</Text>
     </Word> 	
 	<Word>
+        <Code>671</Code>
+        <Text>更新表失败，表不存在</Text>
+    </Word> 	
+	<Word>
         <Code>680</Code>
         <Text>获取推荐索引成功</Text>
     </Word> 
@@ -161,4 +165,8 @@
         <Code>682</Code>
         <Text>获取推荐索引失败，没有找到合适列</Text>
     </Word>		
+	<Word>
+        <Code>690</Code>
+        <Text>插入表完成</Text>
+    </Word>			
 </Words>
