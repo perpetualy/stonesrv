@@ -45,7 +45,8 @@ var (
 	GetUpdatesFailedRemoteFailed   = 645
 	GetUpdatesLocalUpdateAlready   = 646
 
-	GetClassifiesSuccess = 650
+	GetClassifiesSuccess   = 650
+	GetClassifyInfoSuccess = 651
 
 	AddTableSuccess             = 660
 	AddTableFailedAlreadyExists = 661
