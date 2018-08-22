@@ -33,9 +33,9 @@ type ArangoDB struct {
 func (p *ArangoDB) Init() {
 	//下面是硬编码
 	p.address = fmt.Sprintf("http://%s:8529", conf.GetDBAddress())
-	p.user = env.ArangoDBDefaultUser         //用户名
-	p.password = env.ArangoDBDefaultPassword //密码
-	p.dbname = env.ArangoDBDefaultDBName     //数据库名称
+	p.user = conf.GetDBUser()         //用户名
+	p.password = conf.GetDBPassword() //密码
+	p.dbname = conf.GetDBName()       //数据库名称
 
 	p.initConnection(p.address)
 	p.initClient(p.user, p.password)

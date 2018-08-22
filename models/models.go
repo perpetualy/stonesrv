@@ -8,6 +8,9 @@ import (
 //Config ini配置文件
 type Config struct {
 	DBAddress     string `ini:"DBAddress"`
+	DBUser        string `ini:"DBUser"`
+	DBPassword    string `ini:"DBPassword"`
+	DBName        string `ini:"DBName"`
 	ServerAddress string `ini:"ServerAddress"`
 	ServerPort    string `ini:"ServerPort"`
 	SSLCrtFile    string `ini:"SSLCrtFile"`

@@ -39,6 +39,24 @@ func GetDBAddress() string {
 	return conf.config.DBAddress
 }
 
+//GetDBUser 获取配置文件数据库登陆用户名
+func GetDBUser() string {
+	//env.ArangoDBDefaultUser
+	return conf.config.DBUser
+}
+
+//GetDBPassword 获取配置文件数据库登陆密码
+func GetDBPassword() string {
+	//env.ArangoDBDefaultPassword
+	return conf.config.DBPassword
+}
+
+//GetDBName 获取配置文件数据库登陆密码
+func GetDBName() string {
+	//env.ArangoDBDefaultDBName
+	return conf.config.DBName
+}
+
 //GetServerAddress 获取服务器地址
 func GetServerAddress() string {
 	return conf.config.ServerAddress
