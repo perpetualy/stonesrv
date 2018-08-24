@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"stonesrv/conf"
 	"stonesrv/controllers"
 	"stonesrv/database"
@@ -11,9 +12,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var _VERSION_ = "0.5.0"
+
 func main() {
 	log.Init("stone.log", true, true)
 	//读取配置文件
+
+	//show version
+	log.Info(fmt.Sprintf("Stone Version %v", _VERSION_))
 
 	conf.Init("")
 	language.Init("./language")

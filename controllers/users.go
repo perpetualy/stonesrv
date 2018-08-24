@@ -347,6 +347,7 @@ func (p *UserInfo) getInfo(context *gin.Context) {
 		Address:  usr.Address,
 		Email:    usr.Email,
 		Phone:    usr.Phone,
+		Space:    usr.Space,
 		RegDate:  usr.RegDate,
 		ExpDate:  usr.ExpDate,
 	}

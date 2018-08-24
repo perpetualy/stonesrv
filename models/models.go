@@ -45,6 +45,8 @@ type User struct {
 	Phone    string `json:"phone" binding:"required"`
 	Company  string `json:"company" binding:"required"`
 
+	Space int64 `json:"space" binding:"required"` //用户空间限制
+
 	Mac       string `json:"mac" binding:"required"`
 	Disk0     string `json:"disk0" binding:"required"`
 	Salt      int64  `json:"salt" binding:"required"` //暂时无用 强制设定为2
@@ -66,7 +68,7 @@ type Disk0 struct {
 	UserKey string `json:"userkey"`
 }
 
-//Update 版本更新
+//Updates 版本更新
 type Updates struct {
 	Key     string `json:"_key,omitempty"`
 	Version string `json:"version"`

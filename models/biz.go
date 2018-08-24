@@ -36,6 +36,7 @@ type RegisterRequest struct {
 	FullName string `json:"fullname" binding:"required"`
 	Phone    string `json:"phone" binding:"required"`
 	Company  string `json:"company" binding:"required"`
+	Space    int64  `json:"space" binding:"required"`
 
 	Mac       string `json:"mac" binding:"required"`
 	Disk0     string `json:"disk0" binding:"required"`
@@ -61,6 +62,7 @@ type UserInfoResponse struct {
 	Address  string `json:"address" binding:"required"`  //地址
 	Phone    string `json:"phone" binding:"required"`    //电话
 	Email    string `json:"email" binding:"required"`    //邮箱
+	Space    int64  `json:"space" binding:"required"`    //空间限制
 	RegDate  string `json:"regdate" binding:"required"`  //注册日期
 	ExpDate  string `json:"expdate" binding:"required"`  //到期日
 }
