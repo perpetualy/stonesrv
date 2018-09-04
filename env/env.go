@@ -59,4 +59,6 @@ var (
 	GetIndexsRecommendsFailedNotFound    = 682
 
 	InsertTableSuccess = 690
+
+	GetAllTablesSuccess = 700
 )

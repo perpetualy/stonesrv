@@ -172,5 +172,9 @@
 	<Word>
         <Code>690</Code>
         <Text>插入表完成</Text>
-    </Word>			
+    </Word>	
+	<Word>
+        <Code>700</Code>
+        <Text>获取全部表成功</Text>
+    </Word>	    		
 </Words>
