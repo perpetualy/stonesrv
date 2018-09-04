@@ -330,6 +330,7 @@ func (p *UserInfo) getInfo(context *gin.Context) {
 		return
 	}
 	key := fmt.Sprintf("%s%s%s", userInfoRequest.User, userInfoRequest.P1, userInfoRequest.P2)
+	log.Info(key)
 	usr := database.GetDatabase().GetUserByKey(key)
 	//查询用户是否存在
 	if usr == nil {
