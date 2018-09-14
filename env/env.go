@@ -61,4 +61,11 @@ var (
 	InsertTableSuccess = 690
 
 	GetAllTablesSuccess = 700
+
+	GetJoinQuantInfoSuccess    = 710
+	UpsertJoinQuantInfoSuccess = 711
+	GetRiceQuantInfoSuccess    = 720
+	UpsertRiceQuantInfoSuccess = 721
+	GetTushareInfoSuccess      = 730
+	UpsertTushareInfoSuccess   = 731
 )

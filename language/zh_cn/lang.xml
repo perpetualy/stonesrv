@@ -176,5 +176,29 @@
 	<Word>
         <Code>700</Code>
         <Text>获取全部表成功</Text>
-    </Word>	    		
+    </Word>	    
+	<Word>
+        <Code>710</Code>
+        <Text>获取聚宽安装信息成功</Text>
+    </Word>	 
+	<Word>
+        <Code>711</Code>
+        <Text>更新聚宽安装信息成功</Text>
+    </Word>		
+	<Word>
+        <Code>720</Code>
+        <Text>获取米筐安装信息成功</Text>
+    </Word>	 	
+	<Word>
+        <Code>721</Code>
+        <Text>更新米筐安装信息成功</Text>
+    </Word>		
+	<Word>
+        <Code>730</Code>
+        <Text>获取Tushare安装信息成功</Text>
+    </Word>
+	<Word>
+        <Code>731</Code>
+        <Text>更新Tushare安装信息成功</Text>
+    </Word>	
 </Words>
