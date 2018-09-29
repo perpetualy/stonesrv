@@ -65,13 +65,13 @@ func (p *Register) register(context *gin.Context) {
 		return
 	}
 
-	//验证MAC是否存在
-	if database.GetDatabase().IsMACExist(req.Mac) {
-		//MAC存在返回
-		env.GenJSONResponse(context, env.RegFailedPCAlreadyRegistered, nil)
-		//context.JSON(env.RegFailedPCAlreadyRegistered, gin.H{"status": language.GetText(env.RegFailedPCAlreadyRegistered)})
-		return
-	}
+	// //验证MAC是否存在
+	// if database.GetDatabase().IsMACExist(req.Mac) {
+	// 	//MAC存在返回
+	// 	env.GenJSONResponse(context, env.RegFailedPCAlreadyRegistered, nil)
+	// 	//context.JSON(env.RegFailedPCAlreadyRegistered, gin.H{"status": language.GetText(env.RegFailedPCAlreadyRegistered)})
+	// 	return
+	// }
 
 	//验证DISK0是否存在
 	if database.GetDatabase().IsDisk0Exist(req.Disk0) {
@@ -98,7 +98,8 @@ func (p *Register) register(context *gin.Context) {
 	user.ExpDate = expdate.Format(env.FullDateTimeFormat) //生成过期时间
 	user.Activated = 1
 
-	err = database.GetDatabase().InsertMAC(models.MAC{Key: user.Mac, UserKey: user.Key})
+	unixoffest := time.Now().Unix()
+	err = database.GetDatabase().InsertMAC(models.MAC{Key: fmt.Sprintf("%s_%v", user.Mac, unixoffest), UserKey: user.Key})
 	if err != nil {
 		//返回JSON
 		env.GenJSONResponse(context, env.RegFailed, req.User)

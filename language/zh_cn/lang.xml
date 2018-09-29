@@ -200,5 +200,29 @@
 	<Word>
         <Code>731</Code>
         <Text>更新Tushare安装信息成功</Text>
-    </Word>	
+    </Word>
+	<Word>
+        <Code>750</Code>
+        <Text>添加任务成功</Text>
+    </Word>
+	<Word>
+        <Code>751</Code>
+        <Text>删除任务成功</Text>
+    </Word>
+	<Word>
+        <Code>752</Code>
+        <Text>获取单个任务成功</Text>
+    </Word>
+	<Word>
+        <Code>753</Code>
+        <Text>获取全部任务成功</Text>
+    </Word>
+	<Word>
+        <Code>760</Code>
+        <Text>删除上传文件成功</Text>
+    </Word>
+	<Word>
+        <Code>760</Code>
+        <Text>删除上传文件失败</Text>
+    </Word>              
 </Words>

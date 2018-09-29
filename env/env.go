@@ -54,6 +54,9 @@ var (
 	UpdateTableSuccess           = 670
 	UpdateTableFailedDoNotExists = 671
 
+	RemoveTableSuccess           = 675
+	RemoveTableFailedDoNotExists = 676
+
 	GetIndexsRecommendsSuccess           = 680
 	GetIndexsRecommendsFailedDataInvalid = 681
 	GetIndexsRecommendsFailedNotFound    = 682
@@ -68,4 +71,12 @@ var (
 	UpsertRiceQuantInfoSuccess = 721
 	GetTushareInfoSuccess      = 730
 	UpsertTushareInfoSuccess   = 731
+
+	AddTaskSuccess    = 750
+	RemoveTaskSuccess = 751
+	GetTaskSuccess    = 752
+	GetAllTaskSuccess = 753
+
+	RemoveUploadedFilesSuccess = 760
+	RemoveUploadedFilesFailed  = 761
 )
