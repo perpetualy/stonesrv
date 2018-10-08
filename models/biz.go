@@ -29,14 +29,16 @@ type LogoutRequest struct {
 
 //RegisterRequest 注册请求
 type RegisterRequest struct {
-	User     string `json:"user" binding:"required"`
-	Password string `json:"password" binding:"required"`
-	Email    string `json:"email" binding:"required"`
-	Address  string `json:"address" binding:"required"`
-	FullName string `json:"fullname" binding:"required"`
-	Phone    string `json:"phone" binding:"required"`
-	Company  string `json:"company" binding:"required"`
-	Space    int64  `json:"space" binding:"required"`
+	User      string `json:"user" binding:"required"`
+	Password  string `json:"password" binding:"required"`
+	Email     string `json:"email" binding:"required"`
+	Address   string `json:"address" binding:"required"`
+	FullName  string `json:"fullname" binding:"required"`
+	Phone     string `json:"phone" binding:"required"`
+	Company   string `json:"company" binding:"required"`
+	Space     int64  `json:"space" binding:"required"`
+	Tables    int64  `json:"tables"`
+	Functions int64  `json:"functions"`
 
 	Mac       string `json:"mac" binding:"required"`
 	Disk0     string `json:"disk0" binding:"required"`
@@ -56,15 +58,17 @@ type UserInfoRequest struct {
 
 //UserInfoResponse 获取用户信息回报
 type UserInfoResponse struct {
-	User     string `json:"user" binding:"required"`     //用户名
-	FullName string `json:"fullname" binding:"required"` //全名
-	Company  string `json:"company" binding:"required"`  //公司名
-	Address  string `json:"address" binding:"required"`  //地址
-	Phone    string `json:"phone" binding:"required"`    //电话
-	Email    string `json:"email" binding:"required"`    //邮箱
-	Space    int64  `json:"space" binding:"required"`    //空间限制
-	RegDate  string `json:"regdate" binding:"required"`  //注册日期
-	ExpDate  string `json:"expdate" binding:"required"`  //到期日
+	User      string `json:"user" binding:"required"`      //用户名
+	FullName  string `json:"fullname" binding:"required"`  //全名
+	Company   string `json:"company" binding:"required"`   //公司名
+	Address   string `json:"address" binding:"required"`   //地址
+	Phone     string `json:"phone" binding:"required"`     //电话
+	Email     string `json:"email" binding:"required"`     //邮箱
+	Space     int64  `json:"space" binding:"required"`     //空间限制
+	Tables    int64  `json:"tables" binding:"required"`    //表限制
+	Functions int64  `json:"functions" binding:"required"` //功能限制
+	RegDate   string `json:"regdate" binding:"required"`   //注册日期
+	ExpDate   string `json:"expdate" binding:"required"`   //到期日
 }
 
 //UpdatesRequest 版本更新请求

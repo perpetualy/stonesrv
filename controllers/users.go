@@ -343,15 +343,17 @@ func (p *UserInfo) getInfo(context *gin.Context) {
 
 	//创建回报
 	rsp := models.UserInfoResponse{
-		User:     usr.User,
-		FullName: usr.FullName,
-		Company:  usr.Company,
-		Address:  usr.Address,
-		Email:    usr.Email,
-		Phone:    usr.Phone,
-		Space:    usr.Space,
-		RegDate:  usr.RegDate,
-		ExpDate:  usr.ExpDate,
+		User:      usr.User,
+		FullName:  usr.FullName,
+		Company:   usr.Company,
+		Address:   usr.Address,
+		Email:     usr.Email,
+		Phone:     usr.Phone,
+		Space:     usr.Space,
+		Tables:    usr.Tables,
+		Functions: usr.Functions,
+		RegDate:   usr.RegDate,
+		ExpDate:   usr.ExpDate,
 	}
 	info, err := json.Marshal(rsp)
 	if err != nil {

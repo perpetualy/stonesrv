@@ -45,7 +45,9 @@ type User struct {
 	Phone    string `json:"phone" binding:"required"`
 	Company  string `json:"company" binding:"required"`
 
-	Space int64 `json:"space" binding:"required"` //用户空间限制
+	Space     int64 `json:"space" binding:"required"`     //用户空间限制
+	Tables    int64 `json:"tables" binding:"required"`    //用户表限制
+	Functions int64 `json:"functions" binding:"required"` //用户功能限制
 
 	Mac       string `json:"mac" binding:"required"`
 	Disk0     string `json:"disk0" binding:"required"`
