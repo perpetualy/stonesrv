@@ -76,6 +76,8 @@ var (
 	RemoveTaskSuccess = 751
 	GetTaskSuccess    = 752
 	GetAllTaskSuccess = 753
+	StartTaskSuccess  = 755
+	StartTaskFailed   = 756
 
 	RemoveUploadedFilesSuccess = 760
 	RemoveUploadedFilesFailed  = 761
