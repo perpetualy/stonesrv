@@ -81,4 +81,10 @@ var (
 
 	RemoveUploadedFilesSuccess = 760
 	RemoveUploadedFilesFailed  = 761
+
+	QueryDataSuccess = 770
+
+	GetAllViewsSuccess = 780
+	UpsertViewSuccess  = 781
+	RemoveViewSuccess  = 782
 )
