@@ -70,6 +70,20 @@ type Disk0 struct {
 	UserKey string `json:"userkey"`
 }
 
+//UserBehavior 用户行为
+type UserBehavior struct {
+	Key            string   `json:"_key,omitempty"`
+	PasswordFailed int64    `json:"passwordfailed"`
+	InActivated    int64    `json:"inactivated"`
+	Expired        int64    `json:"expired"`
+	LoginSuccess   int64    `json:"loginsuccess"`
+	UsedSpace      int64    `json:"usedspaces"`
+	UsedTable      int64    `json:"usedtables"`
+	LastLogin      string   `json:"lastlogin"`
+	LastLogout     string   `json:"lastlogout"`
+	LoginIPs       []string `json:"loginips"`
+}
+
 //Updates 版本更新
 type Updates struct {
 	Key     string `json:"_key,omitempty"`

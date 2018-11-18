@@ -12,10 +12,12 @@ var (
 
 	//CollectionUser 用户集合
 	CollectionUser = "user"
-	//CollectionUpdate 更新集合
+	//CollectionUpdates 更新集合
 	CollectionUpdates = "updates"
 	//CollectionMAC MAC地址集合
 	CollectionMAC = "mac"
 	//CollectionDisk0 Disk0地址集合
 	CollectionDisk0 = "disk0"
+	//CollectionUserBehavior 用户行为
+	CollectionUserBehavior = "userbehavior"
 )

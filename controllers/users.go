@@ -186,12 +186,16 @@ func (p *Login) login(context *gin.Context) {
 	if strings.Compare(loginRequest.Password, usr.Password) != 0 {
 		//密码不正确
 		env.GenJSONResponse(context, env.LoginFailedPasswordIncorrect, nil)
+		//这里记录密码错误登录失败
+		database.GetDatabase().RecordUserPasswordFailed(key)
 		//context.JSON(env.LoginFailedPasswordIncorrect, gin.H{"status": language.GetText(env.LoginFailedPasswordIncorrect)})
 		return
 	}
 	if usr.Activated != 1 {
 		//用户已经失效
 		env.GenJSONResponse(context, env.LoginFailedUserInactivated, nil)
+		//这里记录用户失效
+		database.GetDatabase().RecordUserInActivated(key)
 		//context.JSON(env.LoginFailedUserInactivated, gin.H{"status": language.GetText(env.LoginFailedUserInactivated)})
 		return
 	}
@@ -209,6 +213,8 @@ func (p *Login) login(context *gin.Context) {
 	if now.After(locExpDate) || now.After(expDate) {
 		//用户已经过期
 		env.GenJSONResponse(context, env.LoginFailedUserExpired, nil)
+		//这里记录用户过期
+		database.GetDatabase().RecordUserExpired(key)
 		//context.JSON(env.LoginFailedUserExpired, gin.H{"status": language.GetText(env.LoginFailedUserExpired)})
 		return
 	}
@@ -225,6 +231,10 @@ func (p *Login) login(context *gin.Context) {
 		return
 	}
 
+	//这里记录登录成功次数
+	database.GetDatabase().RecordUserLoginSuccess(key)
+	//这里记录登录IP
+	//database.GetDatabase().RecordUserLoginIP(key, "IP")
 	//客户端需要维护token
 	env.GenJSONResponseWithMsg(context, env.LoginSuccess, token)
 	//context.JSON(env.LoginSuccess, gin.H{"status": token})
@@ -286,6 +296,8 @@ func (p *Logout) logout(context *gin.Context) {
 		//context.JSON(env.LogoutFailed, gin.H{"status": "登出失败"})
 		return
 	}
+	//这里记录登出时间
+	database.GetDatabase().RecordUserLogoutSuccess(key)
 	env.GenJSONResponse(context, env.LogoutSuccess, nil)
 	//context.JSON(env.LogoutSuccess, gin.H{"status": "登出成功?"})
 }

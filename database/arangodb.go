@@ -8,6 +8,7 @@ import (
 	"stonesrv/env"
 	"stonesrv/log"
 	"stonesrv/models"
+	"time"
 
 	godriver "github.com/arangodb/go-driver"
 	"github.com/arangodb/go-driver/http"
@@ -44,6 +45,7 @@ func (p *ArangoDB) Init() {
 	p.openCollection(env.CollectionUpdates)
 	p.openCollection(env.CollectionMAC)
 	p.openCollection(env.CollectionDisk0)
+	p.openCollection(env.CollectionUserBehavior)
 }
 
 //InsertMAC 插入MAC
@@ -250,6 +252,19 @@ func (p *ArangoDB) DeactiveUser(user models.User) error {
 	return p.UpdateUserInfo(user)
 }
 
+//ExtendUser 延长用户时间 ext 单位是天
+func (p *ArangoDB) ExtendUser(user models.User, ext int) error {
+	loc, lok := time.LoadLocation("Local")
+	regDate, pok := time.ParseInLocation(env.FullDateTimeFormat, user.RegDate, loc)
+	if lok != nil || pok != nil {
+		return fmt.Errorf("arangodb extenduser parse time failed")
+	}
+	expDate := regDate.Add(time.Hour * 24 * time.Duration(ext))
+	user.ExpDate = expDate.Format(env.FullDateTimeFormat)
+	user.Duration = int64(expDate.Sub(regDate).Minutes())
+	return p.UpdateUserInfo(user)
+}
+
 //UpdateUserInfo 更新用户信息
 func (p *ArangoDB) UpdateUserInfo(user models.User) error {
 	bindVar := map[string]interface{}{
@@ -260,6 +275,145 @@ func (p *ArangoDB) UpdateUserInfo(user models.User) error {
 	err := p.update(bindVar)
 	return err
 }
+
+///用户行为记录
+//UpsertUserBehavior 更新用户行为信息
+func (p *ArangoDB) UpsertUserBehavior(userbehavior models.UserBehavior) error {
+	bindVar := map[string]interface{}{
+		"doc":         userbehavior,
+		"key":         userbehavior.Key,
+		"@collection": env.CollectionUserBehavior,
+	}
+	err := p.upsert(bindVar)
+	return err
+}
+
+//GetUserBehaviorByKey 获取用户行为
+func (p *ArangoDB) GetUserBehaviorByKey(key string) *models.UserBehavior {
+	cursor, err := p.queryDocByKey(env.CollectionUserBehavior, key)
+	if err != nil {
+		log.Debug(fmt.Sprintf("GetUserBehaviorByKey() error, detail%v\n", err))
+		return nil
+	}
+	defer cursor.Close()
+	for cursor.HasMore() {
+		var userbehavior models.UserBehavior
+		_, err := cursor.ReadDocument(context.Background(), &userbehavior)
+		if err != nil {
+			log.Debug(fmt.Sprintf("GetUserBehaviorByKey() error, detail%v\n", err))
+			return nil
+		}
+		return &userbehavior
+	}
+	return nil
+}
+
+//RecordUserPasswordFailed 记录用户登录密码错误次数
+func (p *ArangoDB) RecordUserPasswordFailed(key string) error {
+	userBehavior := p.GetUserBehaviorByKey(key)
+	if userBehavior == nil {
+		userBehavior = &models.UserBehavior{
+			Key:      key,
+			LoginIPs: make([]string, 0),
+		}
+	}
+	userBehavior.PasswordFailed++
+	return p.UpsertUserBehavior(*userBehavior)
+}
+
+//RecordUserInActivated 记录用户非激活状态登录次数
+func (p *ArangoDB) RecordUserInActivated(key string) error {
+	userBehavior := p.GetUserBehaviorByKey(key)
+	if userBehavior == nil {
+		userBehavior = &models.UserBehavior{
+			Key:      key,
+			LoginIPs: make([]string, 0),
+		}
+	}
+	userBehavior.InActivated++
+	return p.UpsertUserBehavior(*userBehavior)
+}
+
+//RecordUserExpired 记录用户过期登录次数
+func (p *ArangoDB) RecordUserExpired(key string) error {
+	userBehavior := p.GetUserBehaviorByKey(key)
+	if userBehavior == nil {
+		userBehavior = &models.UserBehavior{
+			Key:      key,
+			LoginIPs: make([]string, 0),
+		}
+	}
+	userBehavior.Expired++
+	return p.UpsertUserBehavior(*userBehavior)
+}
+
+//RecordUserLoginSuccess 记录用户最后登录成功时间和次数
+func (p *ArangoDB) RecordUserLoginSuccess(key string) error {
+	userBehavior := p.GetUserBehaviorByKey(key)
+	if userBehavior == nil {
+		userBehavior = &models.UserBehavior{
+			Key:      key,
+			LoginIPs: make([]string, 0),
+		}
+	}
+	userBehavior.LoginSuccess++
+	userBehavior.LastLogin = time.Now().Format(env.FullDateTimeFormat)
+	return p.UpsertUserBehavior(*userBehavior)
+}
+
+//RecordUserLogoutSuccess 记录用户登出成功时间
+func (p *ArangoDB) RecordUserLogoutSuccess(key string) error {
+	userBehavior := p.GetUserBehaviorByKey(key)
+	if userBehavior == nil {
+		userBehavior = &models.UserBehavior{
+			Key:      key,
+			LoginIPs: make([]string, 0),
+		}
+	}
+	userBehavior.LastLogout = time.Now().Format(env.FullDateTimeFormat)
+	return p.UpsertUserBehavior(*userBehavior)
+}
+
+//RecordUserLoginIP 记录用户登录过的IP地址
+func (p *ArangoDB) RecordUserLoginIP(key string, ip string) error {
+	userBehavior := p.GetUserBehaviorByKey(key)
+	if userBehavior == nil {
+		userBehavior = &models.UserBehavior{
+			Key:      key,
+			LoginIPs: make([]string, 0),
+		}
+	}
+	userBehavior.LoginIPs = append(userBehavior.LoginIPs, ip)
+	return p.UpsertUserBehavior(*userBehavior)
+}
+
+//RecordUserCurrentSpaces 记录用户已经使用的空间
+func (p *ArangoDB) RecordUserCurrentSpaces(key string, space int64) error {
+	userBehavior := p.GetUserBehaviorByKey(key)
+	if userBehavior == nil {
+		userBehavior = &models.UserBehavior{
+			Key:      key,
+			LoginIPs: make([]string, 0),
+		}
+	}
+	userBehavior.UsedSpace = space
+	return p.UpsertUserBehavior(*userBehavior)
+}
+
+//RecordUserCurrentTables 记录用户已经使用的表数量
+func (p *ArangoDB) RecordUserCurrentTables(key string, table int64) error {
+	userBehavior := p.GetUserBehaviorByKey(key)
+	if userBehavior == nil {
+		userBehavior = &models.UserBehavior{
+			Key:      key,
+			LoginIPs: make([]string, 0),
+		}
+	}
+	userBehavior.UsedTable = table
+	return p.UpsertUserBehavior(*userBehavior)
+}
+
+///用户行为记录
 
 //GetUpdate 获取软件更新
 func (p *ArangoDB) GetUpdate() *models.Updates {

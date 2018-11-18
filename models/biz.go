@@ -71,6 +71,11 @@ type UserInfoResponse struct {
 	ExpDate   string `json:"expdate" binding:"required"`   //到期日
 }
 
+//UserBehaviorRequest 获取用户行为
+type UserBehaviorRequest struct {
+	User string `json:"user" binding:"required"` //用户名
+}
+
 //UpdatesRequest 版本更新请求
 type UpdatesRequest struct {
 	Version string `json:"version" binding:"required"` //本地版本号

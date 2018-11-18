@@ -17,14 +17,27 @@ type DataBase interface {
 	//用户
 	GetAllUsers() []*models.User
 	IsUserExist(key string) bool
-	GetUserByKey(string) *models.User
-	GetUserByName(string) *models.User
+	GetUserByKey(key string) *models.User
+	GetUserByName(username string) *models.User
 	InsertUser(models.User) error
 	RemoveUser(models.User) error
 	//UpsertUser(models.User) error
 	ActiveUser(models.User) error
 	DeactiveUser(models.User) error
+	ExtendUser(models.User, int) error
 	UpdateUserInfo(models.User) error
+
+	//用户行为
+	UpsertUserBehavior(models.UserBehavior) error
+	GetUserBehaviorByKey(key string) *models.UserBehavior
+	RecordUserPasswordFailed(key string) error
+	RecordUserInActivated(key string) error
+	RecordUserExpired(key string) error
+	RecordUserLoginSuccess(key string) error
+	RecordUserLogoutSuccess(key string) error
+	RecordUserLoginIP(key string, ip string) error
+	RecordUserCurrentSpaces(key string, space int64) error
+	RecordUserCurrentTables(key string, table int64) error
 
 	//升级
 	GetUpdate() *models.Updates
