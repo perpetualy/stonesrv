@@ -87,4 +87,6 @@ var (
 	GetAllViewsSuccess = 780
 	UpsertViewSuccess  = 781
 	RemoveViewSuccess  = 782
+
+	GetSrvConfigsSuccess = 790
 )
