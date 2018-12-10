@@ -19,6 +19,7 @@ type Config struct {
 	UpdateFile    string `ini:"UpdateFile"`
 	Language      string `ini:"Language"`
 	DebugMode     string `ini:"DebugMode"`
+	ToCMode       string `ini:"ToCMode"`
 }
 
 //Word 多语言基本单词
@@ -82,6 +83,68 @@ type UserBehavior struct {
 	LastLogin      string   `json:"lastlogin"`
 	LastLogout     string   `json:"lastlogout"`
 	LoginIPs       []string `json:"loginips"`
+}
+
+//UserPack 用户套餐
+type UserPack struct {
+	Key        string `json:"_key,omitempty"` //自动生成
+	Name       string `json:"name"`           //名称
+	Desc       string `json:"desc"`           //描述
+	UserKey    string `json:"userkey"`        //用户KEY
+	Space      int64  `json:"space"`          //用户空间限制
+	Tables     int64  `json:"tables"`         //用户表限制
+	Functions  int64  `json:"functions"`      //用户功能限制
+	CreateTime string `json:"createtime"`     //创建时间
+	ExpTime    string `json:"exptime"`        //过期时间
+	Token      string `json:"token"`          //token
+}
+
+//UserSpacePlus 用户空间叠加包
+type UserSpacePlus struct {
+	Key        string `json:"_key,omitempty"` //自动生成
+	Name       string `json:"name"`           //名称
+	Desc       string `json:"desc"`           //描述
+	UserKey    string `json:"userkey"`        //用户KEY
+	Space      int64  `json:"space"`          //用户空间限制
+	CreateTime string `json:"createtime"`     //创建时间
+	ExpTime    string `json:"exptime"`        //过期时间
+	Token      string `json:"token"`          //token
+}
+
+//UserTablePlus 用户表叠加包
+type UserTablePlus struct {
+	Key        string `json:"_key,omitempty"` //自动生成
+	Name       string `json:"name"`           //名称
+	Desc       string `json:"desc"`           //描述
+	UserKey    string `json:"userkey"`        //用户KEY
+	Tables     int64  `json:"tables"`         //用户表限制
+	CreateTime string `json:"createtime"`     //创建时间
+	ExpTime    string `json:"exptime"`        //过期时间
+	Token      string `json:"token"`          //token
+}
+
+//UserSpaceAndTablePlus 用户空间和表叠加包
+type UserSpaceAndTablePlus struct {
+	Key        string `json:"_key,omitempty"` //自动生成
+	Name       string `json:"name"`           //名称
+	Desc       string `json:"desc"`           //描述
+	UserKey    string `json:"userkey"`        //用户KEY
+	Space      int64  `json:"space"`          //用户空间限制
+	Tables     int64  `json:"tables"`         //用户表限制
+	CreateTime string `json:"createtime"`     //创建时间
+	ExpTime    string `json:"exptime"`        //过期时间
+	Token      string `json:"token"`          //token
+}
+
+//UserOrderWeChat 用户订单微信关系表
+type UserOrderWeChat struct {
+	Key        string `json:"_key,omitempty"`              //自动生成
+	UserKey    string `json:"userkey" binding:"required"`  //用户KEY
+	OrderID    string `json:"orderid" binding:"required"`  //订单号
+	WeChatID   string `json:"wechatid" binding:"required"` //关联的微信号
+	CreateTime string `json:"createtime"`                  //创建时间
+	UpdateTime string `json:"updatetime"`                  //更新时间
+	Status     string `json:"status"`                      //订单状态
 }
 
 //Updates 版本更新

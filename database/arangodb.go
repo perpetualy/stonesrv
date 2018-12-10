@@ -46,6 +46,13 @@ func (p *ArangoDB) Init() {
 	p.openCollection(env.CollectionMAC)
 	p.openCollection(env.CollectionDisk0)
 	p.openCollection(env.CollectionUserBehavior)
+
+	p.openCollection(env.CollectionUserPack)
+	p.openCollection(env.CollectionUserSpacePlus)
+	p.openCollection(env.CollectionUserTablePlus)
+	p.openCollection(env.CollectionUserSpaceAndTablePlus)
+
+	p.openCollection(env.CollectionUserOrderWeChat)
 }
 
 //InsertMAC 插入MAC
@@ -173,7 +180,7 @@ func (p *ArangoDB) IsUserExist(key string) bool {
 func (p *ArangoDB) GetUserByKey(key string) *models.User {
 	cursor, err := p.queryDocByKey(env.CollectionUser, key)
 	if err != nil {
-		log.Debug(fmt.Sprintf("GetUserByKey() error, detail%v\n", err))
+		log.Error(fmt.Sprintf("GetUserByKey() error, detail%v\n", err))
 		return nil
 	}
 	defer cursor.Close()
@@ -181,7 +188,7 @@ func (p *ArangoDB) GetUserByKey(key string) *models.User {
 		var user models.User
 		_, err := cursor.ReadDocument(context.Background(), &user)
 		if err != nil {
-			log.Debug(fmt.Sprintf("GetUserByKey() error, detail%v\n", err))
+			log.Error(fmt.Sprintf("GetUserByKey() error, detail%v\n", err))
 			return nil
 		}
 		return &user
@@ -274,6 +281,100 @@ func (p *ArangoDB) UpdateUserInfo(user models.User) error {
 	}
 	err := p.update(bindVar)
 	return err
+}
+
+//收费包
+//PACK
+//InsertPack
+func (p *ArangoDB) InsertPack(userpack models.UserPack) error {
+	bindVar := map[string]interface{}{
+		"doc":         userpack,
+		"@collection": env.CollectionUserPack,
+	}
+	err := p.insert(bindVar)
+	return err
+}
+
+//GetPack
+func (p *ArangoDB) GetPack(username string) *models.UserPack {
+	user := p.GetUserByName(username)
+	if user == nil {
+		log.Error(fmt.Sprintf("GetPack() error, detail no user\n"))
+		return nil
+	}
+
+	cursor, err := p.queryDocByUserKey(env.CollectionUserPack, user.Key)
+	if err != nil {
+		log.Error(fmt.Sprintf("GetPack() error, detail%v\n", err))
+		return nil
+	}
+	defer cursor.Close()
+	var pack models.UserPack
+	for cursor.HasMore() {
+		_, err := cursor.ReadDocument(context.Background(), &pack)
+		if err != nil {
+			log.Error(fmt.Sprintf("GetPack() error, detail%v\n", err))
+			return nil
+		}
+	}
+	return &pack
+}
+
+//SPACE PLUS
+//InsertUserSpacePlus
+func (p *ArangoDB) InsertUserSpacePlus(userspaceplus models.UserSpacePlus) error {
+	bindVar := map[string]interface{}{
+		"doc":         userspaceplus,
+		"@collection": env.CollectionUserSpacePlus,
+	}
+	err := p.insert(bindVar)
+	return err
+}
+
+//GetUserSpacePlus
+func (p *ArangoDB) GetUserSpacePlus(key string) []*models.UserSpacePlus {
+	return nil
+}
+
+//TABLE PLUS
+//InsertUserTablePlus
+func (p *ArangoDB) InsertUserTablePlus(usertableplus models.UserTablePlus) error {
+	bindVar := map[string]interface{}{
+		"doc":         usertableplus,
+		"@collection": env.CollectionUserTablePlus,
+	}
+	err := p.insert(bindVar)
+	return err
+}
+
+//GetUserTablePlus
+func (p *ArangoDB) GetUserTablePlus(key string) []*models.UserTablePlus {
+	return nil
+}
+
+//SPACE AND TABLE
+//InsertUserSpaceAndTablePlus
+func (p *ArangoDB) InsertUserSpaceAndTablePlus(userspaceandtableplus models.UserSpaceAndTablePlus) error {
+	bindVar := map[string]interface{}{
+		"doc":         userspaceandtableplus,
+		"@collection": env.CollectionUserSpaceAndTablePlus,
+	}
+	err := p.insert(bindVar)
+	return err
+}
+
+//GetUserSpaceAndTablePlus
+func (p *ArangoDB) GetUserSpaceAndTablePlus(key string) []*models.UserSpaceAndTablePlus {
+	return nil
+}
+
+///////
+
+//付款记录
+//IsUserPaied 判断用户是否已经付款，现阶段都默认已经付款
+func (p *ArangoDB) IsUserPaied(key string) bool {
+	//return false
+	return true
 }
 
 ///用户行为记录
@@ -622,6 +723,24 @@ func (p *ArangoDB) queryUserByName(username string) (out godriver.Cursor, e erro
 func (p *ArangoDB) queryDocByKey(collection string, key string) (out godriver.Cursor, e error) {
 	aql := `FOR doc in @@collection
 			FILTER doc._key == @key
+			SORT doc._key
+			return doc`
+	bindVar := map[string]interface{}{
+		"key":         key,
+		"@collection": collection,
+	}
+	cursor, err := p.Database.Query(context.Background(), aql, bindVar)
+	if err != nil {
+		return nil, err
+	}
+	return cursor, err
+}
+
+//queryDocByUserKey 通用方法通过KEY找数据
+func (p *ArangoDB) queryDocByUserKey(collection string, key string) (out godriver.Cursor, e error) {
+	aql := `FOR doc in @@collection
+			FILTER doc.userkey == @key
+			SORT doc._key
 			return doc`
 	bindVar := map[string]interface{}{
 		"key":         key,

@@ -71,6 +71,29 @@ type UserInfoResponse struct {
 	ExpDate   string `json:"expdate" binding:"required"`   //到期日
 }
 
+//InsertPackRequest 插入套餐请求
+type InsertPackRequest struct {
+	User      string `json:"user" binding:"required"`      //用户名
+	Name      string `json:"name" binding:"required"`      //名称
+	Desc      string `json:"desc"`                         //描述
+	OrderID   string `json:"orderid" binding:"required"`   //订单号
+	WeChatID  string `json:"wechatid" binding:"required"`  //关联的微信号
+	Space     int64  `json:"space" binding:"required"`     //空间限制
+	Tables    int64  `json:"tables" binding:"required"`    //表限制
+	Functions int64  `json:"functions" binding:"required"` //功能限制
+	Duration  int64  `json:"duration" binding:"required"`  //时长
+}
+
+//GetPackTokenRequest 获取套餐TOKEN请求
+type GetPackTokenRequest struct {
+	User string `json:"user" binding:"required"` //用户名
+}
+
+//GetPackRequest 获取套餐请求
+type GetPackRequest struct {
+	User string `json:"user" binding:"required"` //用户名
+}
+
 //UserBehaviorRequest 获取用户行为
 type UserBehaviorRequest struct {
 	User string `json:"user" binding:"required"` //用户名

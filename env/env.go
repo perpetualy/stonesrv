@@ -89,4 +89,15 @@ var (
 	RemoveViewSuccess  = 782
 
 	GetSrvConfigsSuccess = 790
+
+	InsertPackSuccess       = 800
+	InsertPackFailed        = 801
+	InsertPackFailedGetUser = 802
+	InsertPackFailedNoPaied = 803
+
+	GetPackTokenSuccess      = 810
+	GetPackTokenFailedNoPack = 811
+
+	GetPackSuccess      = 820
+	GetPackFailedNoPack = 821
 )

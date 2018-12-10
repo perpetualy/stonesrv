@@ -222,7 +222,59 @@
         <Text>删除上传文件成功</Text>
     </Word>
 	<Word>
-        <Code>760</Code>
+        <Code>761</Code>
         <Text>删除上传文件失败</Text>
-    </Word>              
+    </Word> 
+    <Word>
+        <Code>770</Code>
+        <Text>查询数据成功</Text>
+    </Word>
+    <Word>
+        <Code>780</Code>
+        <Text>查询全部视图成功</Text>
+    </Word>  
+    <Word>
+        <Code>781</Code>
+        <Text>更新视图成功</Text>
+    </Word>   
+    <Word>
+        <Code>782</Code>
+        <Text>删除视图成功</Text>
+    </Word>   
+    <Word>
+        <Code>790</Code>
+        <Text>获取服务配置成功</Text>
+    </Word> 
+    <Word>
+        <Code>800</Code>
+        <Text>插入套餐成功</Text>
+    </Word>   
+    <Word>
+        <Code>801</Code>
+        <Text>插入套餐失败</Text>
+    </Word>
+    <Word>
+        <Code>802</Code>
+        <Text>插入套餐失败用户不存在</Text>
+    </Word>    
+    <Word>
+        <Code>803</Code>
+        <Text>插入套餐失败用户未付款</Text>
+    </Word>    
+    <Word>
+        <Code>810</Code>
+        <Text>获取套餐Token成功</Text>
+    </Word>    
+    <Word>
+        <Code>811</Code>
+        <Text>获取套餐Token失败，没有套餐</Text>
+    </Word>   
+    <Word>
+        <Code>820</Code>
+        <Text>获取套餐成功</Text>
+    </Word>    
+    <Word>
+        <Code>821</Code>
+        <Text>获取套餐失败，没有套餐</Text>
+    </Word>               
 </Words>

@@ -27,6 +27,25 @@ type DataBase interface {
 	ExtendUser(models.User, int) error
 	UpdateUserInfo(models.User) error
 
+	//PACK
+	InsertPack(models.UserPack) error
+	GetPack(username string) *models.UserPack
+
+	//SPACE PLUS
+	InsertUserSpacePlus(models.UserSpacePlus) error
+	GetUserSpacePlus(key string) []*models.UserSpacePlus
+
+	//TABLE PLUS
+	InsertUserTablePlus(models.UserTablePlus) error
+	GetUserTablePlus(key string) []*models.UserTablePlus
+
+	//SPACE AND TABLE
+	InsertUserSpaceAndTablePlus(models.UserSpaceAndTablePlus) error
+	GetUserSpaceAndTablePlus(key string) []*models.UserSpaceAndTablePlus
+
+	//User Paied
+	IsUserPaied(key string) bool
+
 	//用户行为
 	UpsertUserBehavior(models.UserBehavior) error
 	GetUserBehaviorByKey(key string) *models.UserBehavior

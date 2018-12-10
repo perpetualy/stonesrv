@@ -46,6 +46,14 @@ func regController(e *gin.Engine, c Controllers) {
 		irouter = e.Group(group, gin.BasicAuth(accounts.GetAccounts()))
 	case "/auth":
 		irouter = e.Group(group, middlewares.AuthToken())
+	case "/pack":
+		irouter = e.Group(group, middlewares.PackToken())
+	case "/space":
+		irouter = e.Group(group, middlewares.SpaceToken())
+	case "/table":
+		irouter = e.Group(group, middlewares.TableToken())
+	case "/spacetable":
+		irouter = e.Group(group, middlewares.SpaceTableToken())
 	case "":
 		irouter = e
 	}

@@ -97,6 +97,11 @@ func IsDebugMode() bool {
 	return strings.Compare(conf.config.DebugMode, "1") == 0
 }
 
+//IsToCMode 判断是否ToC模式
+func IsToCMode() bool {
+	return strings.Compare(conf.config.ToCMode, "1") == 0
+}
+
 //initConfig 初始化配置文件
 func (p *Conf) initConfig() {
 	config, err := p.readConfig()

@@ -32,6 +32,9 @@ func main() {
 		&controllers.UserInfo{},
 		&controllers.Updates{},
 		&controllers.Admin{},
+		&controllers.InsertPack{},
+		&controllers.GetPackToken{},
+		&controllers.GetPack{},
 	}
 	for _, v := range ctrls {
 		routers.AddController(v)

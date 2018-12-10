@@ -81,8 +81,8 @@ func (p *Register) register(context *gin.Context) {
 		return
 	}
 
-	//验证使用时长
-	if req.Duration < 0 || req.Duration > 518400 {
+	//验证使用时长 不得是负数 最长年限不能超过10年
+	if req.Duration < 0 || req.Duration > 5184000 {
 		env.GenJSONResponse(context, env.RegFailedInvalidDuration, nil)
 		//context.JSON(env.RegFailedInvalidDuration, gin.H{"status": language.GetText(env.RegFailedInvalidDuration)})
 		return
@@ -174,6 +174,7 @@ func (p *Login) login(context *gin.Context) {
 		return
 	}
 	key := fmt.Sprintf("%s%s%s", loginRequest.User, loginRequest.P1, loginRequest.P2)
+	log.Info(key)
 	usr := database.GetDatabase().GetUserByKey(key)
 	//查询用户是否存在
 	if usr == nil {
