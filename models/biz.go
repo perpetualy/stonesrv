@@ -16,15 +16,15 @@ type Response struct {
 type LoginRequest struct {
 	User     string `json:"user" binding:"required"`     //用户名
 	Password string `json:"password" binding:"required"` //MD5 + SHA1 + SALT
-	P1       string `json:"p1" binding:"required"`       //MAC MD5
-	P2       string `json:"p2" binding:"required"`       //Disk0 MD5
+	P1       string `json:"p1"`                          //MAC MD5	或者 微信 OPENID
+	P2       string `json:"p2"`                          //Disk0 MD5
 }
 
 //LogoutRequest 登出请求
 type LogoutRequest struct {
 	User string `json:"user" binding:"required"` //用户名
-	P1   string `json:"p1" binding:"required"`   //MAC MD5
-	P2   string `json:"p2" binding:"required"`   //Disk0 MD5
+	P1   string `json:"p1"`                      //MAC MD5
+	P2   string `json:"p2"`                      //Disk0 MD5
 }
 
 //RegisterRequest 注册请求
@@ -52,8 +52,8 @@ type RegisterRequest struct {
 //UserInfoRequest 获取用户信息请求
 type UserInfoRequest struct {
 	User string `json:"user" binding:"required"` //用户名
-	P1   string `json:"p1" binding:"required"`   //MAC MD5
-	P2   string `json:"p2" binding:"required"`   //Disk0 MD5
+	P1   string `json:"p1"`                      //MAC MD5
+	P2   string `json:"p2"`                      //Disk0 MD5
 }
 
 //UserInfoResponse 获取用户信息回报
@@ -69,6 +69,10 @@ type UserInfoResponse struct {
 	Functions int64  `json:"functions" binding:"required"` //功能限制
 	RegDate   string `json:"regdate" binding:"required"`   //注册日期
 	ExpDate   string `json:"expdate" binding:"required"`   //到期日
+	Pack      string `json:"pack"`                         //套餐
+	Plus      string `json:"plus"`                         //叠加包
+	Remark    string `json:"remark"`                       //标记
+	Preserve  string `json:"preserve"`                     //保留字段
 }
 
 //InsertPackRequest 插入套餐请求
