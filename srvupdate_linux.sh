@@ -6,4 +6,5 @@ cp -r /home/flynnyal/application/go/src/stonesrv/conf /home/flynnyal/application
 rm /home/flynnyal/application/go/src/stonesrv/package/language/*.go
 rm /home/flynnyal/application/go/src/stonesrv/package/conf/*.go
 scp -r /home/flynnyal/application/go/src/stonesrv/package root@202.182.127.17:/root/application/go/src/stonesrv
+scp -r /home/flynnyal/application/go/src/stonesrv/package root@202.182.127.17:/root/application/go/src/stonesrvC
 
