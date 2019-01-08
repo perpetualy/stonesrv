@@ -77,6 +77,7 @@ func (p *InsertPack) insertPack(context *gin.Context) {
 	expTime := locExpTime.Format(env.FullDateTimeFormat)
 	token := crypto.GenToken(insertPackRequest.Duration, int64(crypto.PackSalt))
 	userPack := models.UserPack{
+		PackKey:    insertPackRequest.PackKey,
 		Name:       insertPackRequest.Name,
 		Desc:       insertPackRequest.Desc,
 		UserKey:    user.Key,

@@ -22,6 +22,8 @@ type DataBase interface {
 	InsertUser(models.User) error
 	RemoveUser(models.User) error
 	//UpsertUser(models.User) error
+	SetUserToPRO(models.User) error
+	SetUserToSTD(models.User) error
 	ActiveUser(models.User) error
 	DeactiveUser(models.User) error
 	ExtendUser(models.User, int) error

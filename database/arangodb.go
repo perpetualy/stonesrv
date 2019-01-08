@@ -47,12 +47,17 @@ func (p *ArangoDB) Init() {
 	p.openCollection(env.CollectionDisk0)
 	p.openCollection(env.CollectionUserBehavior)
 
+	p.openCollection(env.CollectionPacks)
+
 	p.openCollection(env.CollectionUserPack)
 	p.openCollection(env.CollectionUserSpacePlus)
 	p.openCollection(env.CollectionUserTablePlus)
 	p.openCollection(env.CollectionUserSpaceAndTablePlus)
 
+	p.openCollection(env.CollectionUserWeChat)
 	p.openCollection(env.CollectionUserOrderWeChat)
+
+	p.openCollection(env.CollectionOrders)
 }
 
 //InsertMAC 插入MAC
@@ -269,6 +274,18 @@ func (p *ArangoDB) ExtendUser(user models.User, ext int) error {
 	expDate := regDate.Add(time.Hour * 24 * time.Duration(ext))
 	user.ExpDate = expDate.Format(env.FullDateTimeFormat)
 	user.Duration = int64(expDate.Sub(regDate).Minutes())
+	return p.UpdateUserInfo(user)
+}
+
+//SetUserToPRO 用户升级为PRO用户
+func (p *ArangoDB) SetUserToPRO(user models.User) error {
+	user.Functions = 2
+	return p.UpdateUserInfo(user)
+}
+
+//SetUserToSTD 用户降级为STD用户
+func (p *ArangoDB) SetUserToSTD(user models.User) error {
+	user.Functions = 1
 	return p.UpdateUserInfo(user)
 }
 

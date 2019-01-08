@@ -23,15 +23,23 @@ var (
 	//CollectionUserBehavior 用户行为
 	CollectionUserBehavior = "userbehavior"
 
+	//CollectionPacks 套餐
+	CollectionPacks = "packs"
+
 	//CollectionUserPack 用户套餐
 	CollectionUserPack = "userpack"
-	//CollectionsUserSpacePlus 空间叠加包
+	//CollectionUserSpacePlus 空间叠加包
 	CollectionUserSpacePlus = "userspaceplus"
-	//CollectionsUserTablePlus 表叠加包
+	//CollectionUserTablePlus 表叠加包
 	CollectionUserTablePlus = "usertableplus"
-	//CollectionsUserSpaceAndTablePlus 空间和表叠加包
+	//CollectionUserSpaceAndTablePlus 空间和表叠加包
 	CollectionUserSpaceAndTablePlus = "userspaceandtableplus"
 
+	//CollectionUserWeChat 用户和微信号关联
+	CollectionUserWeChat = "userwechat"
 	//CollectionUserOrderWeChat 用户订单和微信号
 	CollectionUserOrderWeChat = "userorderwechat"
+
+	//CollectionOrders 用户订单
+	CollectionOrders = "orders"
 )

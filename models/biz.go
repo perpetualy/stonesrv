@@ -78,6 +78,7 @@ type UserInfoResponse struct {
 //InsertPackRequest 插入套餐请求
 type InsertPackRequest struct {
 	User      string `json:"user" binding:"required"`      //用户名
+	PackKey   string `json:"packkey" binding:"required"`   //套餐KEY
 	Name      string `json:"name" binding:"required"`      //名称
 	Desc      string `json:"desc"`                         //描述
 	OrderID   string `json:"orderid" binding:"required"`   //订单号
