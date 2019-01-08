@@ -64,6 +64,9 @@ type DataBase interface {
 	GetUpdate() *models.Updates
 	SetUpdate(models.Updates) error
 	RemoveUpdate(models.Updates) error
+
+	//每日一句
+	GetDailyInfo() *models.DailyInfo
 }
 
 var db *DB

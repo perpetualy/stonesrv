@@ -193,3 +193,17 @@ type Updates struct {
 	Force   int64  `json:"force"`
 	RelDate string `json:"reldate"`
 }
+
+//DailyInfo 每日一句
+type DailyInfo struct {
+	Key   string `json:"_key,omitempty"`
+	Name  string `json:"name"`
+	Type  string `json:"type"`  //0 短语 1 名言 3 新闻
+	Info1 string `json:"info1"` //短语|名言
+	Info2 string `json:"info2"` //短语|名言
+	Info3 string `json:"info3"` //短语|名言
+	Info4 string `json:"info4"` //新闻  RAWTEXT
+	Info5 string `json:"info5"` //新闻	URL
+	Info6 string `json:"info6"` //新闻	HTML
+	Sign  string `json:"sign"`  //短语|名言|新闻
+}

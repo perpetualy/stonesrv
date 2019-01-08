@@ -276,5 +276,13 @@
     <Word>
         <Code>821</Code>
         <Text>获取套餐失败，没有套餐</Text>
-    </Word>               
+    </Word>   
+    <Word>
+        <Code>830</Code>
+        <Text>获取每日一句成功</Text>
+    </Word> 
+    <Word>
+        <Code>831</Code>
+        <Text>获取每日一句失败</Text>
+    </Word>                     
 </Words>

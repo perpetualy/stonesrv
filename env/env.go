@@ -100,4 +100,7 @@ var (
 
 	GetPackSuccess      = 820
 	GetPackFailedNoPack = 821
+
+	GetDailyInfoSuccess = 830
+	GetDailyInfoFailed  = 831
 )

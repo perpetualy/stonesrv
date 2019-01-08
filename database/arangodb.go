@@ -3,6 +3,7 @@ package database
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"runtime/debug"
 	"stonesrv/conf"
 	"stonesrv/env"
@@ -48,6 +49,8 @@ func (p *ArangoDB) Init() {
 	p.openCollection(env.CollectionUserBehavior)
 
 	p.openCollection(env.CollectionPacks)
+
+	p.openCollection(env.CollectionDailyInfo)
 
 	p.openCollection(env.CollectionUserPack)
 	p.openCollection(env.CollectionUserSpacePlus)
@@ -573,6 +576,33 @@ func (p *ArangoDB) RemoveUpdate(update models.Updates) error {
 	return err
 }
 
+//GetDailyInfo 获取每日一句
+func (p *ArangoDB) GetDailyInfo() *models.DailyInfo {
+	cursor, err := p.queryDailyInfoAll()
+	if err != nil {
+		log.Error(fmt.Sprintf("GetDailyInfo() error, detail%v\n", err))
+		return nil
+	}
+	defer cursor.Close()
+	dailyinfos := make([]*models.DailyInfo, 0)
+	for cursor.HasMore() {
+		var dailyInfo models.DailyInfo
+		_, err := cursor.ReadDocument(context.Background(), &dailyInfo)
+		if err != nil {
+			log.Error(fmt.Sprintf("GetDailyInfo() error, detail%v\n", err))
+			return nil
+		}
+		dailyinfos = append(dailyinfos, &dailyInfo)
+	}
+	//返回随机的每日一句
+	alllen := len(dailyinfos)
+	randIndex := rand.Intn(alllen)
+	if randIndex >= 0 && randIndex < alllen {
+		return dailyinfos[randIndex]
+	}
+	return nil
+}
+
 //以下是内部函数
 
 //initConnection 初始化连接
@@ -870,4 +900,16 @@ func (p *ArangoDB) queryUpdate() (cursor godriver.Cursor, err error) {
 			return upd`
 	cursor, err = p.Database.Query(context.Background(), aql, nil)
 	return
+}
+
+//queryDailyInfoAll 获取全部的每日一句
+func (p *ArangoDB) queryDailyInfoAll() (out godriver.Cursor, e error) {
+	aql := `FOR di in dailyinfo
+				return di`
+
+	cursor, err := p.Database.Query(context.Background(), aql, nil)
+	if err != nil {
+		return nil, err
+	}
+	return cursor, err
 }

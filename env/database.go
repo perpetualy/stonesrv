@@ -26,6 +26,9 @@ var (
 	//CollectionPacks 套餐
 	CollectionPacks = "packs"
 
+	//CollectionDailyInfo 每日一句
+	CollectionDailyInfo = "dailyinfo"
+
 	//CollectionUserPack 用户套餐
 	CollectionUserPack = "userpack"
 	//CollectionUserSpacePlus 空间叠加包

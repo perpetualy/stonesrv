@@ -118,3 +118,8 @@ type UpdatesResponse struct {
 	RelDate string `json:"reldate"` //更新日期
 	Path    string `json:"path"`    //下载路径
 }
+
+//GetDailyInfoRequest 获取每日一句请求
+type GetDailyInfoRequest struct {
+	Req string `json:"req" binding:"required"` //请求消息
+}
