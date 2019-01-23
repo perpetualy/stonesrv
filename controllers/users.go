@@ -367,6 +367,10 @@ func (p *UserInfo) getInfo(context *gin.Context) {
 		Functions: usr.Functions,
 		RegDate:   usr.RegDate,
 		ExpDate:   usr.ExpDate,
+		Pack:      "N/A",
+		Plus:      "N/A",
+		Remark:    "N/A",
+		Preserve:  "N/A",
 	}
 	info, err := json.Marshal(rsp)
 	if err != nil {
@@ -614,6 +618,10 @@ func (p *UserInfoWeChat) getInfo(context *gin.Context) {
 		Functions: usr.Functions,
 		RegDate:   usr.RegDate,
 		ExpDate:   usr.ExpDate,
+		Pack:      "N/A",
+		Plus:      "N/A",
+		Remark:    "N/A",
+		Preserve:  "N/A",
 	}
 	info, err := json.Marshal(rsp)
 	if err != nil {
