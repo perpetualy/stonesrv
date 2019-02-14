@@ -1,6 +1,6 @@
 package database
 
-import "stonesrv/models"
+import "xmvideo/models"
 
 //DataBase 数据库接口
 type DataBase interface {

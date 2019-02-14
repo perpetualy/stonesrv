@@ -1,10 +1,9 @@
-go install stonesrv
-cp /home/flynnyal/application/go/bin/stonesrv /home/flynnyal/application/go/src/stonesrv/package
-cp -r /home/flynnyal/application/go/src/stonesrv/language /home/flynnyal/application/go/src/stonesrv/package
-cp -r /home/flynnyal/application/go/src/stonesrv/updates /home/flynnyal/application/go/src/stonesrv/package
-cp -r /home/flynnyal/application/go/src/stonesrv/conf /home/flynnyal/application/go/src/stonesrv/package
-rm /home/flynnyal/application/go/src/stonesrv/package/language/*.go
-rm /home/flynnyal/application/go/src/stonesrv/package/conf/*.go
-scp -r /home/flynnyal/application/go/src/stonesrv/package root@202.182.127.17:/root/application/go/src/stonesrv
-scp -r /home/flynnyal/application/go/src/stonesrv/package root@202.182.127.17:/root/application/go/src/stonesrvC
+go install xmvideosrv
+cp /home/flynnyal/application/go/bin/xmvideosrv /home/flynnyal/application/go/src/xmvideo/package
+cp -r /home/flynnyal/application/go/src/xmvideo/language /home/flynnyal/application/go/src/xmvideo/package
+cp -r /home/flynnyal/application/go/src/xmvideo/updates /home/flynnyal/application/go/src/xmvideo/package
+cp -r /home/flynnyal/application/go/src/xmvideo/conf /home/flynnyal/application/go/src/xmvideo/package
+rm /home/flynnyal/application/go/src/xmvideo/package/language/*.go
+rm /home/flynnyal/application/go/src/xmvideo/package/conf/*.go
+scp -r /home/flynnyal/application/go/src/xmvideo/package root@47.107.60.107:/root/xmvideo
 

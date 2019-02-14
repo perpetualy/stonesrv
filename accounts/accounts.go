@@ -11,7 +11,7 @@ func newAccount() *Accounts {
 	}
 
 	//添加系统默认账户
-	accounts.addAccount("stone", "456789") //stone admin 账户
+	accounts.addAccount("xmvideo", "456789") //xmvideo admin 账户
 
 	return accounts
 }

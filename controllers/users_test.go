@@ -6,20 +6,20 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"stonesrv/conf"
-	"stonesrv/database"
-	"stonesrv/env"
-	"stonesrv/language"
-	"stonesrv/log"
-	"stonesrv/models"
 	"testing"
 	"time"
+	"xmvideo/conf"
+	"xmvideo/database"
+	"xmvideo/env"
+	"xmvideo/language"
+	"xmvideo/log"
+	"xmvideo/models"
 
 	. "github.com/smartystreets/goconvey/convey"
 )
 
 var (
-	configPath   = "../conf/stonesrv_test.cfg"
+	configPath   = "../conf/xmvideosrv_test.cfg"
 	languagePath = "../language"
 )
 

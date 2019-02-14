@@ -6,13 +6,13 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"stonesrv/conf"
-	"stonesrv/database"
-	"stonesrv/env"
-	"stonesrv/language"
-	"stonesrv/log"
-	"stonesrv/models"
 	"testing"
+	"xmvideo/conf"
+	"xmvideo/database"
+	"xmvideo/env"
+	"xmvideo/language"
+	"xmvideo/log"
+	"xmvideo/models"
 
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -20,7 +20,7 @@ import (
 //UpdatesGetGroup函数测试
 func TestUpdatesGetGroup(t *testing.T) {
 	Convey("【测试】 UpdateGetGroup", t, func() {
-		conf.Init("../conf/stonesrv.cfg")
+		conf.Init("../conf/xmvideosrv.cfg")
 		update := Updates{}
 		group := update.GetGroup()
 		Convey("获取分组 ", func() {
@@ -32,7 +32,7 @@ func TestUpdatesGetGroup(t *testing.T) {
 //UpdatesGetRelativePath函数测试
 func TestUpdatesGetRelativePath(t *testing.T) {
 	Convey("【测试】 UpdateGetRelativePath", t, func() {
-		conf.Init("../conf/stonesrv.cfg")
+		conf.Init("../conf/xmvideosrv.cfg")
 		update := Updates{}
 		relativePath := update.GetRelativePath()
 		Convey("获取相对路径 ", func() {
@@ -44,7 +44,7 @@ func TestUpdatesGetRelativePath(t *testing.T) {
 //UpdatesGetMethod函数测试
 func TestUpdatesGetMethod(t *testing.T) {
 	Convey("【测试】 UpdateGetMethod", t, func() {
-		conf.Init("../conf/stonesrv.cfg")
+		conf.Init("../conf/xmvideosrv.cfg")
 		update := Updates{}
 		method := update.GetMethod()
 		Convey("获取方法名称 ", func() {

@@ -2,7 +2,7 @@ package env
 
 import (
 	"fmt"
-	"stonesrv/language"
+	"xmvideo/language"
 
 	"github.com/gin-gonic/gin"
 )

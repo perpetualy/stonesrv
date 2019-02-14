@@ -5,12 +5,12 @@ import (
 	"net/http"
 	"path"
 	"runtime/debug"
-	"stonesrv/accounts"
-	"stonesrv/conf"
-	"stonesrv/controllers"
-	"stonesrv/log"
-	"stonesrv/middlewares"
 	"sync"
+	"xmvideo/accounts"
+	"xmvideo/conf"
+	"xmvideo/controllers"
+	"xmvideo/log"
+	"xmvideo/middlewares"
 
 	"github.com/gin-gonic/gin"
 )

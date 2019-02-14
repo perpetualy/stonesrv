@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"stonesrv/conf"
-	"stonesrv/controllers"
-	"stonesrv/database"
-	"stonesrv/language"
-	"stonesrv/log"
-	"stonesrv/routers"
+	"xmvideo/conf"
+	"xmvideo/controllers"
+	"xmvideo/database"
+	"xmvideo/language"
+	"xmvideo/log"
+	"xmvideo/routers"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,11 +15,11 @@ import (
 var _VERSION_ = "0.5.0"
 
 func main() {
-	log.Init("stone.log", true, true)
+	log.Init("xmvideosrv.log", true, true)
 	//读取配置文件
 
 	//show version
-	log.Info(fmt.Sprintf("Stone Version %v", _VERSION_))
+	log.Info(fmt.Sprintf("XMvideo Version %v", _VERSION_))
 
 	conf.Init("")
 	language.Init("./language")

@@ -42,13 +42,13 @@ func Debug(msg string) {
 
 	if l.fileLog != nil {
 		l.fileLog.WithFields(logrus.Fields{
-			"Stone": "[Debug]",
+			"XMvideo": "[Debug]",
 		}).Debug(ouput)
 	}
 
 	if l.bConsole {
 		l.stdLog.WithFields(logrus.Fields{
-			"Stone": "[Debug]",
+			"XMvideo": "[Debug]",
 		}).Debug(ouput)
 	}
 
@@ -58,12 +58,12 @@ func Debug(msg string) {
 func Info(msg string) {
 	if l.stdLog != nil {
 		l.stdLog.WithFields(logrus.Fields{
-			"Stone": "[Info]",
+			"XMvideo": "[Info]",
 		}).Info(msg)
 	}
 	if l.fileLog != nil {
 		l.fileLog.WithFields(logrus.Fields{
-			"Stone": "[Info]",
+			"XMvideo": "[Info]",
 		}).Info(msg)
 	}
 
@@ -77,12 +77,12 @@ func Warn(msg string) {
 	}
 	if l.fileLog != nil {
 		l.fileLog.WithFields(logrus.Fields{
-			"Stone": "[Warn!]",
+			"XMvideo": "[Warn!]",
 		}).Warn(ouput)
 	}
 	if l.bConsole {
 		l.stdLog.WithFields(logrus.Fields{
-			"Stone": "[Warn!]",
+			"XMvideo": "[Warn!]",
 		}).Warn(ouput)
 	}
 }
@@ -95,12 +95,12 @@ func Error(msg string) {
 	}
 	if l.fileLog != nil {
 		l.fileLog.WithFields(logrus.Fields{
-			"Stone": "[Error!!!]",
+			"XMvideo": "[Error!!!]",
 		}).Error(ouput)
 	}
 	if l.bConsole {
 		l.stdLog.WithFields(logrus.Fields{
-			"Stone": "[Error!!!]",
+			"XMvideo": "[Error!!!]",
 		}).Error(ouput)
 	}
 }
@@ -114,12 +114,12 @@ func Fatal(msg string) {
 
 	if l.fileLog != nil {
 		l.fileLog.WithFields(logrus.Fields{
-			"Stone": "[~~~Fatal~~~]",
+			"XMvideo": "[~~~Fatal~~~]",
 		}).Fatal(ouput)
 	}
 	if l.bConsole {
 		l.stdLog.WithFields(logrus.Fields{
-			"Stone": "[~~~Fatal~~~]",
+			"XMvideo": "[~~~Fatal~~~]",
 		}).Fatal(ouput)
 	}
 }
@@ -133,12 +133,12 @@ func Panic(msg string) {
 
 	if l.fileLog != nil {
 		l.fileLog.WithFields(logrus.Fields{
-			"Stone": "[~~~!!!Panic!!!~~~]",
+			"XMvideo": "[~~~!!!Panic!!!~~~]",
 		}).Panic(ouput)
 	}
 	if l.bConsole {
 		l.stdLog.WithFields(logrus.Fields{
-			"Stone": "[~~~!!!Panic!!!~~~]",
+			"XMvideo": "[~~~!!!Panic!!!~~~]",
 		}).Panic(ouput)
 	}
 }

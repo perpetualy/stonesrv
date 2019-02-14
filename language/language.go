@@ -4,11 +4,11 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
-	"stonesrv/conf"
-	"stonesrv/log"
-	"stonesrv/models"
 	"strings"
 	"sync"
+	"xmvideo/conf"
+	"xmvideo/log"
+	"xmvideo/models"
 )
 
 var l = new(lang)

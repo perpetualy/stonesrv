@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"stonesrv/conf"
 	"testing"
+	"xmvideo/conf"
 
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -10,7 +10,7 @@ import (
 //AdminGetGroup函数测试
 func TestAdminGetGroup(t *testing.T) {
 	Convey("【测试】 AdminGetGroup", t, func() {
-		conf.Init("../conf/stonesrv.cfg")
+		conf.Init("../conf/xmvideosrv.cfg")
 		admin := Admin{}
 		group := admin.GetGroup()
 		Convey("获取分组 ", func() {
@@ -22,7 +22,7 @@ func TestAdminGetGroup(t *testing.T) {
 //AdminGetRelativePath函数测试
 func TestAdminGetRelativePath(t *testing.T) {
 	Convey("【测试】 AdminGetRelativePath", t, func() {
-		conf.Init("../conf/stonesrv.cfg")
+		conf.Init("../conf/xmvideosrv.cfg")
 		admin := Admin{}
 		relativePath := admin.GetRelativePath()
 		Convey("获取相对路径 ", func() {
@@ -34,7 +34,7 @@ func TestAdminGetRelativePath(t *testing.T) {
 //AdminGetMethod函数测试
 func TestAdminGetMethod(t *testing.T) {
 	Convey("【测试】 AdminGetMethod", t, func() {
-		conf.Init("../conf/stonesrv.cfg")
+		conf.Init("../conf/xmvideosrv.cfg")
 		admin := Admin{}
 		method := admin.GetMethod()
 		Convey("获取方法名称 ", func() {

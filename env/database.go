@@ -5,10 +5,10 @@ var (
 	ArangoDBDefaultUser = "root"
 
 	//ArangoDBDefaultPassword ArangoDB默认密码
-	ArangoDBDefaultPassword = "827aOZ35vd"
+	ArangoDBDefaultPassword = "B@uQ6GVO"
 
 	//ArangoDBDefaultDBName ArangoDB默认数据库名称
-	ArangoDBDefaultDBName = "stone"
+	ArangoDBDefaultDBName = "xmvideo"
 
 	//CollectionUser 用户集合
 	CollectionUser = "user"

@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"fmt"
-	"stonesrv/accounts"
-	"stonesrv/log"
-	"stonesrv/middlewares"
+	"xmvideo/accounts"
+	"xmvideo/log"
+	"xmvideo/middlewares"
 
 	"github.com/gin-gonic/gin"
 )

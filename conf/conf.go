@@ -2,9 +2,9 @@ package conf
 
 import (
 	"fmt"
-	"stonesrv/log"
-	"stonesrv/models"
 	"strings"
+	"xmvideo/log"
+	"xmvideo/models"
 
 	"gopkg.in/ini.v1"
 )
@@ -14,7 +14,7 @@ var conf = newConfig()
 //newConfig 新建配置文件对象
 func newConfig() *Conf {
 	c := &Conf{
-		confPath: "./conf/stonesrv.cfg",
+		confPath: "./conf/xmvideosrv.cfg",
 	}
 	return c
 }

@@ -3,13 +3,13 @@ package controllers
 import (
 	"fmt"
 	"runtime/debug"
-	"stonesrv/crypto"
-	"stonesrv/database"
-	"stonesrv/env"
-	"stonesrv/log"
-	"stonesrv/models"
 	"strings"
 	"time"
+	"xmvideo/crypto"
+	"xmvideo/database"
+	"xmvideo/env"
+	"xmvideo/log"
+	"xmvideo/models"
 
 	"github.com/gin-gonic/gin/json"
 
