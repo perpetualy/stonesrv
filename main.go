@@ -26,18 +26,6 @@ func main() {
 	database.Init()
 
 	ctrls := []controllers.Controllers{
-		&controllers.Register{},
-		&controllers.Login{},
-		&controllers.Logout{},
-		&controllers.UserInfo{},
-		&controllers.LoginWeChat{},
-		&controllers.LogoutWeChat{},
-		&controllers.UserInfoWeChat{},
-		&controllers.Updates{},
-		&controllers.Admin{},
-		&controllers.InsertPack{},
-		&controllers.GetPackToken{},
-		&controllers.GetPack{},
 		&controllers.DailyInfo{},
 	}
 	for _, v := range ctrls {

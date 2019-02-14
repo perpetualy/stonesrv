@@ -42,26 +42,26 @@ func (p *ArangoDB) Init() {
 	p.initConnection(p.address)
 	p.initClient(p.user, p.password)
 	p.openDb(p.dbname)
-	p.openCollection(env.CollectionUser)
-	p.openCollection(env.CollectionUserBackup)
-	p.openCollection(env.CollectionUpdates)
-	p.openCollection(env.CollectionMAC)
-	p.openCollection(env.CollectionDisk0)
-	p.openCollection(env.CollectionUserBehavior)
+	// p.openCollection(env.CollectionUser)
+	// p.openCollection(env.CollectionUserBackup)
+	// p.openCollection(env.CollectionUpdates)
+	// p.openCollection(env.CollectionMAC)
+	// p.openCollection(env.CollectionDisk0)
+	// p.openCollection(env.CollectionUserBehavior)
 
-	p.openCollection(env.CollectionPacks)
+	// p.openCollection(env.CollectionPacks)
 
 	p.openCollection(env.CollectionDailyInfo)
 
-	p.openCollection(env.CollectionUserPack)
-	p.openCollection(env.CollectionUserSpacePlus)
-	p.openCollection(env.CollectionUserTablePlus)
-	p.openCollection(env.CollectionUserSpaceAndTablePlus)
+	// p.openCollection(env.CollectionUserPack)
+	// p.openCollection(env.CollectionUserSpacePlus)
+	// p.openCollection(env.CollectionUserTablePlus)
+	// p.openCollection(env.CollectionUserSpaceAndTablePlus)
 
-	p.openCollection(env.CollectionUserWeChat)
-	p.openCollection(env.CollectionUserOrderWeChat)
+	// p.openCollection(env.CollectionUserWeChat)
+	// p.openCollection(env.CollectionUserOrderWeChat)
 
-	p.openCollection(env.CollectionOrders)
+	// p.openCollection(env.CollectionOrders)
 }
 
 //InsertMAC 插入MAC
