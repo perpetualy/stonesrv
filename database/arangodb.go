@@ -43,6 +43,7 @@ func (p *ArangoDB) Init() {
 	p.initClient(p.user, p.password)
 	p.openDb(p.dbname)
 	p.openCollection(env.CollectionUser)
+	p.openCollection(env.CollectionUserBackup)
 	p.openCollection(env.CollectionUpdates)
 	p.openCollection(env.CollectionMAC)
 	p.openCollection(env.CollectionDisk0)
@@ -74,12 +75,12 @@ func (p *ArangoDB) InsertMAC(mac models.MAC) error {
 }
 
 //RemoveMAC 删除MAC
-func (p *ArangoDB) RemoveMAC(mac models.MAC) error {
+func (p *ArangoDB) RemoveMAC(userkey string) error {
 	bindVar := map[string]interface{}{
-		"doc":         mac,
+		"userkey":     userkey,
 		"@collection": env.CollectionMAC,
 	}
-	err := p.remove(bindVar)
+	err := p.removeByUserKey(bindVar)
 	return err
 }
 
@@ -94,12 +95,12 @@ func (p *ArangoDB) InsertDisk0(disk0 models.Disk0) error {
 }
 
 //RemoveDisk0 删除Disk0
-func (p *ArangoDB) RemoveDisk0(disk0 models.Disk0) error {
+func (p *ArangoDB) RemoveDisk0(userkey string) error {
 	bindVar := map[string]interface{}{
-		"doc":         disk0,
+		"userkey":     userkey,
 		"@collection": env.CollectionDisk0,
 	}
-	err := p.remove(bindVar)
+	err := p.removeByUserKey(bindVar)
 	return err
 }
 
@@ -237,10 +238,21 @@ func (p *ArangoDB) InsertUser(user models.User) error {
 //RemoveUser 删除用户 带KEY
 func (p *ArangoDB) RemoveUser(user models.User) error {
 	bindVar := map[string]interface{}{
-		"doc":         user,
+		"key":         user.Key,
 		"@collection": env.CollectionUser,
 	}
-	err := p.remove(bindVar)
+	err := p.removeByKey(bindVar)
+	return err
+}
+
+//BackupUser 备份用户 带KEY
+func (p *ArangoDB) BackupUser(user models.User) error {
+	user.Key = ""
+	bindVar := map[string]interface{}{
+		"doc":         user,
+		"@collection": env.CollectionUserBackup,
+	}
+	err := p.insert(bindVar)
 	return err
 }
 
@@ -319,7 +331,7 @@ func (p *ArangoDB) InsertPack(userpack models.UserPack) error {
 func (p *ArangoDB) GetPack(username string) *models.UserPack {
 	user := p.GetUserByName(username)
 	if user == nil {
-		log.Error(fmt.Sprintf("GetPack() error, detail no user\n"))
+		log.Error(fmt.Sprintf("GetPack() error, detail no user [%v] \n", username))
 		return nil
 	}
 
@@ -569,10 +581,10 @@ func (p *ArangoDB) SetUpdate(update models.Updates) error {
 //RemoveUpdate 删除某一更新
 func (p *ArangoDB) RemoveUpdate(update models.Updates) error {
 	bindVar := map[string]interface{}{
-		"doc":         update,
+		"key":         update.Key,
 		"@collection": env.CollectionUpdates,
 	}
-	err := p.remove(bindVar)
+	err := p.removeByKey(bindVar)
 	return err
 }
 
@@ -822,10 +834,10 @@ func (p *ArangoDB) insert(bindVar map[string]interface{}) error {
 	return nil
 }
 
-//remove 通用删除
-func (p *ArangoDB) remove(bindVar map[string]interface{}) error {
+//removeByKey 通用删除
+func (p *ArangoDB) removeByKey(bindVar map[string]interface{}) error {
 	aql := `
-		REMOVE @doc IN @@collection
+		REMOVE @key IN @@collection
 		RETURN OLD._key
 	`
 	cursor, err := p.Database.Query(context.Background(), aql, bindVar)
@@ -841,6 +853,23 @@ func (p *ArangoDB) remove(bindVar map[string]interface{}) error {
 		return err
 	}
 	log.Info(fmt.Sprintf("REMOVE %v Success %v.", bindVar["@collection"], ret))
+	return nil
+}
+
+//removeByUserKey 通用删除
+func (p *ArangoDB) removeByUserKey(bindVar map[string]interface{}) error {
+	aql := `
+		FOR d IN @@collection
+			FILTER d.userkey == @userkey
+			REMOVE d IN @@collection
+	`
+	cursor, err := p.Database.Query(context.Background(), aql, bindVar)
+	if err != nil {
+		log.Info(fmt.Sprintf("REMOVE %v failed %v .", bindVar["@collection"], err))
+		return err
+	}
+	defer cursor.Close()
+	log.Info(fmt.Sprintf("REMOVE %v Success UserKey %v.", bindVar["@collection"], bindVar["userkey"]))
 	return nil
 }
 

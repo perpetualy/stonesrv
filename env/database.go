@@ -12,6 +12,8 @@ var (
 
 	//CollectionUser 用户集合
 	CollectionUser = "user"
+	//CollectionUserBackup 用户集合
+	CollectionUserBackup = "userbackup"
 
 	//CollectionUpdates 更新集合
 	CollectionUpdates = "updates"

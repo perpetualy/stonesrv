@@ -110,7 +110,7 @@ func (p *Register) register(context *gin.Context) {
 	err = database.GetDatabase().InsertDisk0(models.Disk0{Key: user.Disk0, UserKey: user.Key})
 	if err != nil {
 		//删除多余MAC
-		database.GetDatabase().RemoveMAC(models.MAC{Key: user.Mac})
+		database.GetDatabase().RemoveMAC(user.Key)
 		//返回JSON
 		env.GenJSONResponse(context, env.RegFailed, req.User)
 		//context.JSON(env.RegFailed, gin.H{"status": fmt.Sprintf(language.GetText(env.RegFailed), req.User)})
@@ -120,9 +120,9 @@ func (p *Register) register(context *gin.Context) {
 	err = database.GetDatabase().InsertUser(user)
 	if err != nil {
 		//删除多余MAC
-		database.GetDatabase().RemoveMAC(models.MAC{Key: user.Mac})
+		database.GetDatabase().RemoveMAC(user.Key)
 		//删除多余Disk0
-		database.GetDatabase().RemoveDisk0(models.Disk0{Key: user.Disk0})
+		database.GetDatabase().RemoveDisk0(user.Key)
 		//返回JSON
 		env.GenJSONResponse(context, env.RegFailed, req.User)
 		//context.JSON(env.RegFailed, gin.H{"status": fmt.Sprintf(language.GetText(env.RegFailed), req.User)})

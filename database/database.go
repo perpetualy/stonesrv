@@ -8,9 +8,9 @@ type DataBase interface {
 
 	//硬件
 	InsertMAC(models.MAC) error
-	RemoveMAC(models.MAC) error
+	RemoveMAC(string) error
 	InsertDisk0(models.Disk0) error
-	RemoveDisk0(models.Disk0) error
+	RemoveDisk0(string) error
 	IsMACExist(mac string) bool
 	IsDisk0Exist(disk0 string) bool
 
@@ -21,6 +21,7 @@ type DataBase interface {
 	GetUserByName(username string) *models.User
 	InsertUser(models.User) error
 	RemoveUser(models.User) error
+	BackupUser(models.User) error
 	//UpsertUser(models.User) error
 	SetUserToPRO(models.User) error
 	SetUserToSTD(models.User) error
